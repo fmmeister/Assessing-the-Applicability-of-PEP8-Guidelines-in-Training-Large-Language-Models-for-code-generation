@@ -43,7 +43,7 @@ def sample_from_dataset(dataset: Dataset, num_samples: int) -> Dataset:
 
 def load_gen_data(file_path: str, tokenizer: AutoTokenizer, block_size: int=128) -> Dataset:
     with open(file_path, "r") as jfile:
-        data = json.load(jfile)
+        data = [json.loads(line) for line in jfile]
 
     data_dicts = [{"input_ids": tokenizer.encode(entry["code"]),
                    "labels": tokenizer.encode(entry["code"])} for entry in data]

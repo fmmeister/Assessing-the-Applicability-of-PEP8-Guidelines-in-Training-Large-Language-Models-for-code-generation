@@ -14,9 +14,9 @@ def parse_args() -> Namespace:
                         help="number of epochs for adversarial training")
     parser.add_argument('--batch_size', default=64, type=int,
                         help="batch size for adversarial generator and discriminator training")
-    parser.add_argument('--data_dir', default="data/aimotion/mbpp", type=str,
+    parser.add_argument('--data_dir', default="RL", type=str,
                         help="training data directory")
-    parser.add_argument('--output_dir', default="/RL", type=str,)
+    parser.add_argument('--output_dir', default="RL", type=str,)
     # Pretraining:
     parser.add_argument('--pretrain', default=1, type=int,
                         help="whether to pretrain the generator")
