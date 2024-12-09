@@ -189,4 +189,4 @@ def _sloc(code: str) -> Tuple[int, float]:
     return sloc, comments
 
 
-OBJ = {"compilable": compilable, "pep08:": pep08, "maintainability": maintainability}
+OBJ = {"pep08:": pep08}

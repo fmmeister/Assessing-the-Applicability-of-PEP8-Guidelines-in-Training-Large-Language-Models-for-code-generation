@@ -1,7 +1,9 @@
 import json
 import os.path
 from argparse import ArgumentParser, Namespace
+from time import gmtime, strftime
 
+from eval import compilable, pep08
 from trainer import GANTrainer
 
 
@@ -10,17 +12,19 @@ def parse_args() -> Namespace:
     # ToDo: read defaults from config file
     parser.add_argument('--gpu', default=0, type=int,
                         help="whether to use gpu")
-    parser.add_argument('--num_adv_epochs', default=200, type=int,
+    parser.add_argument('--num_adv_epochs', default=1, type=int,
                         help="number of epochs for adversarial training")
     parser.add_argument('--batch_size', default=64, type=int,
                         help="batch size for adversarial generator and discriminator training")
-    parser.add_argument('--data_dir', default="RL", type=str,
+    parser.add_argument('--data_dir', default="", type=str,
                         help="training data directory")
-    parser.add_argument('--output_dir', default="RL", type=str,)
+    parser.add_argument('--now', default=strftime("%Y-%m-%d %H_%M_%S", gmtime()), type=str)
+    parser.add_argument('--objectives', default={"pep08:": pep08}, type=list,)
+    parser.add_argument('--obj_weights', default=[1, 1], type=list,)
     # Pretraining:
-    parser.add_argument('--pretrain', default=1, type=int,
+    parser.add_argument('--pretrain', default=0, type=int,
                         help="whether to pretrain the generator")
-    parser.add_argument('--num_pretrain_epochs', default=80, type=int,
+    parser.add_argument('--num_pretrain_epochs', default=40, type=int,
                         help="number of epochs for generator pretraining")
     parser.add_argument('--pretrain_lr', default=2e-5, type=float,
                         help="pretraining learning rate")
@@ -29,9 +33,9 @@ def parse_args() -> Namespace:
     # Generator:
     parser.add_argument('--gen_dir', default="./save/huggan/gen/", type=str,
                         help="directory from which to load and to which to save the trained generator model")
-    parser.add_argument('--load_generator', default=0, type=int,
+    parser.add_argument('--load_generator', default=1, type=int,
                         help="whether to load existing generator model from gen_dir")
-    parser.add_argument('--base_model', default="gpt2", type=str,
+    parser.add_argument('--base_model', default="microsoft/phi-1_5", type=str,
                         help="model to load from huggingface hub as generator base, "
                              "if no local pretrained model is provided")
     parser.add_argument('--max_new_tokens', default=50, type=int,
@@ -88,4 +92,4 @@ if __name__ == "__main__":
         trainer.gen_pretrain()
 
     trainer.adversarial_train()
-    trainer.eval()
+    #trainer.eval()
