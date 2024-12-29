@@ -12,19 +12,21 @@ def parse_args() -> Namespace:
     # ToDo: read defaults from config file
     parser.add_argument('--gpu', default=0, type=int,
                         help="whether to use gpu")
-    parser.add_argument('--num_adv_epochs', default=1, type=int,
+    parser.add_argument('--num_adv_epochs', default=5, type=int,
                         help="number of epochs for adversarial training")
     parser.add_argument('--batch_size', default=64, type=int,
                         help="batch size for adversarial generator and discriminator training")
     parser.add_argument('--data_dir', default="", type=str,
                         help="training data directory")
-    parser.add_argument('--now', default=strftime("%Y-%m-%d %H_%M_%S", gmtime()), type=str)
-    parser.add_argument('--objectives', default={"pep08:": pep08}, type=list,)
-    parser.add_argument('--obj_weights', default=[1, 1], type=list,)
+    parser.add_argument('--save_RL', default=0, type=int,
+                        help="save the model after training")
+    parser.add_argument('--delete_temp_files', default=0, type=int,
+                        help="delete temporary files after training")
+
     # Pretraining:
     parser.add_argument('--pretrain', default=0, type=int,
                         help="whether to pretrain the generator")
-    parser.add_argument('--num_pretrain_epochs', default=40, type=int,
+    parser.add_argument('--num_pretrain_epochs', default=1, type=int,
                         help="number of epochs for generator pretraining")
     parser.add_argument('--pretrain_lr', default=2e-5, type=float,
                         help="pretraining learning rate")
@@ -35,12 +37,12 @@ def parse_args() -> Namespace:
                         help="directory from which to load and to which to save the trained generator model")
     parser.add_argument('--load_generator', default=1, type=int,
                         help="whether to load existing generator model from gen_dir")
-    parser.add_argument('--base_model', default="microsoft/phi-1_5", type=str,
+    parser.add_argument('--base_model', default="./save/huggan/gen/", type=str,
                         help="model to load from huggingface hub as generator base, "
                              "if no local pretrained model is provided")
-    parser.add_argument('--max_new_tokens', default=50, type=int,
+    parser.add_argument('--max_new_tokens', default=200, type=int,
                         help="max number of tokens for generator to produce during adversarial training")
-    parser.add_argument('--n_samples', default=20, type=int,
+    parser.add_argument('--n_samples', default=10, type=int,
                         help="number of samples to generate after pretraining and each adversarial training epoch")
     # Discriminator:
     parser.add_argument('--disc_dir', default="./save/huggan/dis", type=str,
@@ -61,7 +63,7 @@ def parse_args() -> Namespace:
                         help="adversarial learning rate for discriminator")
     parser.add_argument('--num_samples', default=32, type=int,
                         help="number of generated samples to include for each epoch of discriminator training")
-    parser.add_argument('--disc_steps', default=4, type=int,
+    parser.add_argument('--disc_steps', default=1, type=int,
                         help="discriminator training steps for each adversarial epoch")
     parser.add_argument('--clip_norm', default=5.0, type=float,
                         help="number of epochs for generator pretraining")

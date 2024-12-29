@@ -5,10 +5,10 @@ import torch
 from datasets import Dataset, interleave_datasets
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-def prepare_data(generator: AutoModelForCausalLM, 
-                 ground_dataset: Dataset, num_samples: int, 
-                 gen_args: dict) -> Dataset:
 
+def prepare_data(generator: AutoModelForCausalLM,
+                 ground_dataset: Dataset, num_samples: int,
+                 gen_args: dict) -> Dataset:
     gen_args['num_return_sequences'] = num_samples
     gen_dataset = create_gen_dataset(generator, gen_args)
 
@@ -21,18 +21,15 @@ def prepare_data(generator: AutoModelForCausalLM,
 
 
 def create_gen_dataset(generator: AutoModelForCausalLM, gen_args: dict) -> Dataset:
-
     with torch.no_grad():
         samples = generator.generate(**gen_args)
 
     sample_dicts = [{"input_ids": sample,
                      'labels': 0} for sample in samples]
-
     return Dataset.from_list(sample_dicts)
 
 
 def sample_from_dataset(dataset: Dataset, num_samples: int) -> Dataset:
-
     sample_ids = random.sample(range(len(dataset)), num_samples)
 
     samples = dataset.select(sample_ids)
@@ -41,15 +38,15 @@ def sample_from_dataset(dataset: Dataset, num_samples: int) -> Dataset:
     return samples
 
 
-def load_gen_data(file_path: str, tokenizer: AutoTokenizer, block_size: int=128) -> Dataset:
+def load_gen_data(file_path: str, tokenizer: AutoTokenizer, block_size: int = 128) -> Dataset:
     with open(file_path, "r") as jfile:
         data = [json.loads(line) for line in jfile]
 
-    data_dicts = [{"input_ids": tokenizer.encode(entry["code"]),
-                   "labels": tokenizer.encode(entry["code"])} for entry in data]
+    data_dicts = {"input_ids": [tokenizer.encode(entry["text"]) for entry in data],
+                   "labels": [tokenizer.encode(entry["code"]) for entry in data]}
 
-    dataset = Dataset.from_list(data_dicts)
-    return dataset.map(lambda batch: _group_texts(batch, block_size), batched=True)
+    dataset = Dataset.from_dict(data_dicts)
+    return dataset
 
 
 def _group_texts(samples: dict, block_size: int) -> dict:
@@ -64,7 +61,7 @@ def _group_texts(samples: dict, block_size: int) -> dict:
 
     # Split by chunks of block_size.
     result = {
-        k: [t[i : i + block_size] for i in range(0, total_length, block_size)]
+        k: [t[i: i + block_size] for i in range(0, total_length, block_size)]
         for k, t in concatenated_samples.items()
     }
 

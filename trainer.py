@@ -1,4 +1,8 @@
 import os.path
+import random
+import shutil
+from typing import Tuple, Any
+
 from tqdm import tqdm
 from argparse import Namespace
 import time
@@ -8,8 +12,10 @@ from transformers import (AutoTokenizer, AutoModelForCausalLM, AutoConfig, Train
                           DataCollatorForLanguageModeling, DataCollatorWithPadding)
 from trl import PPOTrainer, PPOConfig, AutoModelForCausalLMWithValueHead
 from discriminator import CNNDiscriminator
-from data import prepare_data, load_gen_data, sample_from_dataset
+from data import prepare_data, load_gen_data, sample_from_dataset, create_gen_dataset
 from eval import get_rewards, pep08, compilable
+from time import gmtime, strftime
+
 # ToDo: Logging of parameters and metrics
 # ToDo: take out again:
 import warnings
@@ -28,7 +34,7 @@ class GANTrainer:
         # else:
         #     self.tokenizer = AutoTokenizer.from_pretrained(cfg.tokenizer_src,
         #                                                    padding_side="left")  # assuming cfg.tokenizer_src is either a file path or a huggingface model specifier
-        self.tokenizer = AutoTokenizer.from_pretrained("gpt2", padding_side="left")
+        self.tokenizer = AutoTokenizer.from_pretrained("codeparrot/codeparrot-small", padding_side="left")
         self.tokenizer.pad_token = self.tokenizer.eos_token
         self.lm_data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer, mlm=False)
         print(" >> init generator")
@@ -55,6 +61,7 @@ class GANTrainer:
             load_best_model_at_end=True
         )
         print(" >> init discriminator")
+        # print("Länge tokenizer", len(self.tokenizer))
         self.discriminator = CNNDiscriminator(embed_dim=self.cfg.embed_dim, vocab_size=len(self.tokenizer),
                                               filter_sizes=cfg.filter_sizes, num_filters=cfg.num_filters,
                                               padding_idx=self.tokenizer.pad_token_id, gpu=self.cfg.gpu,
@@ -80,9 +87,9 @@ class GANTrainer:
         self.optimizer = torch.optim.AdamW(self.discriminator.parameters(), lr=self.cfg.disc_lr)
         print(" >> read data")
         self.dataset_train = load_gen_data(os.path.join(self.cfg.data_dir, "train.json"),
-                                           self.tokenizer, block_size=self.cfg.max_new_tokens+1)
+                                           self.tokenizer, block_size=self.cfg.max_new_tokens + 1)
         self.dataset_test = load_gen_data(os.path.join(self.cfg.data_dir, "test.json"),
-                                          self.tokenizer, block_size=self.cfg.max_new_tokens+1)
+                                          self.tokenizer, block_size=self.cfg.max_new_tokens + 1)
 
     def gen_pretrain(self) -> None:
         self.tokenizer.padding_side = "right"
@@ -93,7 +100,7 @@ class GANTrainer:
             eval_dataset=self.dataset_test,
             data_collator=self.lm_data_collator,
         )
-        print(" === Generator Pretraining ===")
+        print("=== Generator Pretraining ===")
         trainer.train()
         self._write_samples(self.cfg.num_pretrain_epochs - 1, pretrain=True)
         print(" >> save pretrained generator to", self.cfg.gen_dir)
@@ -110,34 +117,47 @@ class GANTrainer:
         print(" >> prepare PPOTrainer")
         self.ppo_trainer = PPOTrainer(self.ppo_cfg, self.generator, tokenizer=self.tokenizer)
         print(" =========== Start Adversarial Training ===========")
+        avg_rewards = []
         for epoch in range(self.cfg.num_adv_epochs):
             print(f" --- Epoch {epoch}: Generator ---")
-            gen_stats = self._gen_adv_train()
-            # print(" > ", gen_stats) ToDo
+            gen_stats, avg_rewards = self._gen_adv_train(epoch, avg_rewards)
             print(f" --- Epoch {epoch}: Discriminator---")
             disc_stats = self._disc_adv_train()
             print(" > ", disc_stats)
             print(f" -----------------------------------")
-            if epoch % 10 == 0:
-                self._write_samples(epoch)
+        print("Average Rewards for each of the epochs: ", avg_rewards)
 
-    def _gen_adv_train(self) -> dict:
-        start_txt = [self.tokenizer.bos_token + "Response:\n"] * self.cfg.batch_size
-        starts = self.tokenizer(start_txt, padding=False)
-        starts = [torch.tensor(item).to(self.device) for item in starts['input_ids']]
+        if self.cfg.save_RL:
+            print(" >> save RL model")
+            model_save_now_path = self.cfg.gen_dir + "/" + str(strftime("%Y-%m-%d %H_%M_%S", gmtime()))
+            self.generator.save_pretrained(model_save_now_path + "/generator")
+            # self.tokenizer.save_pretrained(model_save_now_path + "/tokenizer")
+            rewards_file_path = model_save_now_path + "/rewards.txt"
+            with open(rewards_file_path, 'w') as f:
+                for reward in avg_rewards:
+                    f.write(f"{reward}\n")
+
+        if self.cfg.delete_temp_files:
+            print(" >> delete temporary files")
+            if os.path.exists('./temp_files'):
+                shutil.rmtree('./temp_files')
+
+    def _gen_adv_train(self, current_epoch: int, avg_rewards: list) -> tuple[dict, list]:
+        batch_indices = random.sample(range(len(self.dataset_train)), self.cfg.batch_size)
+        starts = [torch.tensor(self.dataset_train['input_ids'][i]).to(self.device) for i in batch_indices]
         generations = self.ppo_trainer.generate(starts, return_prompt=False, **self.generation_kwargs)
-        generated_txts = self.tokenizer.batch_decode(generations)
-
-        rewards = get_rewards(generations, generated_txts, self.discriminator, self.tokenizer)
+        generated_txts = self.tokenizer.batch_decode(generations, skip_special_tokens=True)
+        rewards = get_rewards(generations, generated_txts, self.discriminator, self.tokenizer,
+                              current_epoch=current_epoch, avg_rewards=avg_rewards, batch_indices=batch_indices,
+                              dataset_train=self.dataset_train, tokenizer=self.tokenizer)
         rewards = [reward for reward in rewards]
         train_stats = self.ppo_trainer.step(starts, generations, rewards)
-        # ToDo: more informative file/dir names
         self.generator.save_pretrained(os.path.join(self.cfg.gen_dir, "generator"))
-        return train_stats
+        return train_stats, avg_rewards
 
     def _disc_adv_train(self) -> dict:
         lm_generator = AutoModelForCausalLM.from_pretrained(self.cfg.gen_dir).to(self.device)
-        # lm_generator.to(self.device)
+
         data = prepare_data(lm_generator, self.dataset_train,
                             self.cfg.num_samples, self.generation_kwargs)
         total_loss = 0
