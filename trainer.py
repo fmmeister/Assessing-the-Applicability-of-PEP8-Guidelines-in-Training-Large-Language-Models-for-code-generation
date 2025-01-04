@@ -10,15 +10,16 @@ import torch
 from torch.nn.modules.loss import _Loss
 from transformers import (AutoTokenizer, AutoModelForCausalLM, AutoConfig, TrainingArguments, Trainer,
                           DataCollatorForLanguageModeling, DataCollatorWithPadding)
-from trl import PPOTrainer, PPOConfig, AutoModelForCausalLMWithValueHead
+from trl import PPOTrainer, PPOConfig, AutoModelForCausalLMWithValueHead, SFTTrainer
 from discriminator import CNNDiscriminator
-from data import prepare_data, load_gen_data, sample_from_dataset, create_gen_dataset
+from data import prepare_data, load_gen_data, sample_from_dataset, create_gen_dataset, load_test_list
 from eval import get_rewards, pep08, compilable
 from time import gmtime, strftime
 
 # ToDo: Logging of parameters and metrics
 # ToDo: take out again:
 import warnings
+
 warnings.filterwarnings("ignore")
 
 
@@ -36,6 +37,7 @@ class GANTrainer:
         #                                                    padding_side="left")  # assuming cfg.tokenizer_src is either a file path or a huggingface model specifier
         self.tokenizer = AutoTokenizer.from_pretrained("codeparrot/codeparrot-small", padding_side="left")
         self.tokenizer.pad_token = self.tokenizer.eos_token
+        self.tokenizer.deprecation_warnings["Asking-to-pad-a-fast-tokenizer"] = True
         self.lm_data_collator = DataCollatorForLanguageModeling(tokenizer=self.tokenizer, mlm=False)
         print(" >> init generator")
         if self.cfg.load_generator:
@@ -86,10 +88,9 @@ class GANTrainer:
         self.adv_loss = torch.nn.CrossEntropyLoss()
         self.optimizer = torch.optim.AdamW(self.discriminator.parameters(), lr=self.cfg.disc_lr)
         print(" >> read data")
-        self.dataset_train = load_gen_data(os.path.join(self.cfg.data_dir, "train.json"),
-                                           self.tokenizer, block_size=self.cfg.max_new_tokens + 1)
-        self.dataset_test = load_gen_data(os.path.join(self.cfg.data_dir, "test.json"),
-                                          self.tokenizer, block_size=self.cfg.max_new_tokens + 1)
+        self.dataset_train = load_gen_data(os.path.join(self.cfg.data_dir, "train.json"), self.tokenizer)
+        self.dataset_test_list = load_test_list(os.path.join(self.cfg.data_dir, "train.json"), self.tokenizer)
+        self.dataset_test = load_gen_data(os.path.join(self.cfg.data_dir, "test.json"), self.tokenizer)
 
     def gen_pretrain(self) -> None:
         self.tokenizer.padding_side = "right"
@@ -147,9 +148,10 @@ class GANTrainer:
         starts = [torch.tensor(self.dataset_train['input_ids'][i]).to(self.device) for i in batch_indices]
         generations = self.ppo_trainer.generate(starts, return_prompt=False, **self.generation_kwargs)
         generated_txts = self.tokenizer.batch_decode(generations, skip_special_tokens=True)
-        rewards = get_rewards(generations, generated_txts, self.discriminator, self.tokenizer,
+        rewards, avg_rewards = get_rewards(generations, generated_txts, self.discriminator, self.tokenizer,
                               current_epoch=current_epoch, avg_rewards=avg_rewards, batch_indices=batch_indices,
-                              dataset_train=self.dataset_train, tokenizer=self.tokenizer)
+                              dataset_train=self.dataset_train, dataset_test_list=self.dataset_test_list,
+                              tokenizer=self.tokenizer, train=True, dataset_test=self.dataset_test)
         rewards = [reward for reward in rewards]
         train_stats = self.ppo_trainer.step(starts, generations, rewards)
         self.generator.save_pretrained(os.path.join(self.cfg.gen_dir, "generator"))
@@ -160,6 +162,7 @@ class GANTrainer:
 
         data = prepare_data(lm_generator, self.dataset_train,
                             self.cfg.num_samples, self.generation_kwargs)
+        print(data)
         total_loss = 0
         total_acc = 0
         total_num = 0
@@ -216,16 +219,19 @@ class GANTrainer:
                 f.write(line)
                 f.write("\n============================================================\n")
 
-    def eval(self):
-        # def read_file_as_string(file_path: str) -> str:
-        #     with open(file_path, 'r', encoding='utf-8') as file:
-        #         content = file.read()
-        #     return content
-        #
-        # # Beispielverwendung
-        # file_path = './save/huggan/gen/samples/pretrain_2024-12-01 12_14_59.txt'
-        # file_content = read_file_as_string(file_path)
-        # # print(file_content)
-        # print("Number of errors: ",pep08(file_content))
-        # print("Is compilable: ",compilable(file_content))
-        self._write_samples(0, pretrain=True)
+    def eval(self, current_epoch: int, avg_rewards: list) -> list:
+        print(" >> prepare Evaluation")
+        self.generator = AutoModelForCausalLMWithValueHead.from_pretrained(self.cfg.gen_dir)
+        self.generator = self.generator.to(self.device)
+        self.tokenizer.padding_side = "left"
+        self.ppo_trainer = PPOTrainer(self.ppo_cfg, self.generator, tokenizer=self.tokenizer)
+        batch_indices = random.sample(range(len(self.dataset_test)), self.cfg.batch_size)
+        starts = [torch.tensor(self.dataset_test['input_ids'][i]).to(self.device) for i in batch_indices]
+        generations = self.ppo_trainer.generate(starts, return_prompt=False, **self.generation_kwargs)
+        generated_txts = self.tokenizer.batch_decode(generations, skip_special_tokens=True)
+        rewards, avg_rewards = get_rewards(generations, generated_txts, self.discriminator, self.tokenizer,
+                              current_epoch=current_epoch, avg_rewards=avg_rewards, batch_indices=batch_indices,
+                              dataset_train=self.dataset_train, dataset_test_list=self.dataset_test_list,
+                              tokenizer=self.tokenizer, train=False, dataset_test=self.dataset_test)
+        return avg_rewards
+

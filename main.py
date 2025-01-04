@@ -1,5 +1,6 @@
 import json
 import os.path
+import time
 from argparse import ArgumentParser, Namespace
 from time import gmtime, strftime
 
@@ -12,7 +13,7 @@ def parse_args() -> Namespace:
     # ToDo: read defaults from config file
     parser.add_argument('--gpu', default=0, type=int,
                         help="whether to use gpu")
-    parser.add_argument('--num_adv_epochs', default=5, type=int,
+    parser.add_argument('--num_adv_epochs', default=1, type=int,
                         help="number of epochs for adversarial training")
     parser.add_argument('--batch_size', default=64, type=int,
                         help="batch size for adversarial generator and discriminator training")
@@ -20,13 +21,17 @@ def parse_args() -> Namespace:
                         help="training data directory")
     parser.add_argument('--save_RL', default=0, type=int,
                         help="save the model after training")
-    parser.add_argument('--delete_temp_files', default=0, type=int,
+    parser.add_argument('--delete_temp_files', default=1, type=int,
                         help="delete temporary files after training")
+    parser.add_argument('--eval', default=1, type=int,
+                        help="evaluate the model")
+    parser.add_argument('--adversarial', default=0, type=int,
+                        help="whether to perform adversarial training")
 
     # Pretraining:
     parser.add_argument('--pretrain', default=0, type=int,
                         help="whether to pretrain the generator")
-    parser.add_argument('--num_pretrain_epochs', default=1, type=int,
+    parser.add_argument('--num_pretrain_epochs', default=40, type=int,
                         help="number of epochs for generator pretraining")
     parser.add_argument('--pretrain_lr', default=2e-5, type=float,
                         help="pretraining learning rate")
@@ -35,14 +40,14 @@ def parse_args() -> Namespace:
     # Generator:
     parser.add_argument('--gen_dir', default="./save/huggan/gen/", type=str,
                         help="directory from which to load and to which to save the trained generator model")
-    parser.add_argument('--load_generator', default=1, type=int,
+    parser.add_argument('--load_generator', default=0, type=int,
                         help="whether to load existing generator model from gen_dir")
-    parser.add_argument('--base_model', default="./save/huggan/gen/", type=str,
+    parser.add_argument('--base_model', default="codeparrot/codeparrot-small", type=str,
                         help="model to load from huggingface hub as generator base, "
                              "if no local pretrained model is provided")
     parser.add_argument('--max_new_tokens', default=200, type=int,
                         help="max number of tokens for generator to produce during adversarial training")
-    parser.add_argument('--n_samples', default=10, type=int,
+    parser.add_argument('--n_samples', default=20, type=int,
                         help="number of samples to generate after pretraining and each adversarial training epoch")
     # Discriminator:
     parser.add_argument('--disc_dir', default="./save/huggan/dis", type=str,
@@ -88,10 +93,19 @@ if __name__ == "__main__":
         print(" > makedirs", args.disc_dir)
         os.makedirs(args.disc_dir, exist_ok=True)
 
+    start_time = time.time()
+
     trainer = GANTrainer(args)
 
     if args.pretrain:
         trainer.gen_pretrain()
 
-    trainer.adversarial_train()
-    #trainer.eval()
+    if args.adversarial:
+        trainer.adversarial_train()
+
+    if args.eval:
+        trainer.eval(9999, [])
+
+    end_time = time.time()
+    elapsed_time = (end_time - start_time) / 60
+    print(f"Ausführungszeit: {elapsed_time:.2f} Minuten")

@@ -14,7 +14,8 @@ from pycodestyle import Checker
 def get_rewards(sample_ids: torch.LongTensor, sample_texts: List[str],
                 discriminator: torch.nn.Module, padding: AutoTokenizer, current_epoch: int, avg_rewards: list,
                 tokenizer: AutoTokenizer, batch_indices: List[int], dataset_train: torch.utils.data.Dataset,
-                disc_weight: int = 1) -> torch.Tensor:
+                dataset_test_list: torch.utils.data.Dataset, train: bool,
+                dataset_test: torch.utils.data.Dataset, disc_weight: int = 1) -> tuple[torch.Tensor, List[float]]:
     sample_stack = padding.pad({"input_ids": sample_ids},
                                padding="longest", return_tensors='pt')['input_ids'].to(sample_ids[0].device)
     pred = discriminator.forward(sample_stack)
@@ -23,20 +24,23 @@ def get_rewards(sample_ids: torch.LongTensor, sample_texts: List[str],
     disc_reward = softmax(pred, dim=-1)[:, 1]
     # print(" >> rewards ", disc_reward)
 
-    obj_rewards = collect_rewards(sample_texts, discount=1, current_epoch=current_epoch,
-                                  avg_rewards=avg_rewards, dataset_train=dataset_train, tokenizer=tokenizer,
-                                  batch_indices=batch_indices)
+    obj_rewards, avg_rewards = collect_rewards(sample_texts, discount=1, current_epoch=current_epoch,
+                                               avg_rewards=avg_rewards, dataset_train=dataset_train,
+                                               dataset_test_list=dataset_test_list, dataset_test=dataset_test,
+                                               tokenizer=tokenizer, batch_indices=batch_indices, train=train)
 
     obj_rewards = obj_rewards.to(disc_reward.device)
 
     rewards = disc_weight * disc_reward + obj_rewards
-    return rewards
+    return rewards, avg_rewards
 
 
 def collect_rewards(samples: List[str],
                     current_epoch: int,
-                    avg_rewards: List[float], dataset_train: torch.utils.data.Dataset, tokenizer: AutoTokenizer,
-                    batch_indices: List[int], discount: float = 1.0) -> torch.Tensor:
+                    avg_rewards: List[float], dataset_train: torch.utils.data.Dataset,
+                    tokenizer: AutoTokenizer, dataset_test_list: torch.utils.data.Dataset,
+                    batch_indices: List[int], train: bool, dataset_test: torch.utils.data.Dataset,
+                    discount: float = 1.0) -> tuple[torch.Tensor, List[float]]:
     """
     Compute the weighted sum specified metrics for the list of samples.
 
@@ -52,7 +56,12 @@ def collect_rewards(samples: List[str],
     for k, sample in enumerate(samples):
 
         try:
-            header_prompt = "# " + tokenizer.decode([dataset_train[i]['input_ids'] for i in batch_indices][k]) + "\n\n"
+            if train:
+                header_prompt = "\n# " + tokenizer.decode(
+                    [dataset_train[i]['input_ids'] for i in batch_indices][k]) + "\n\n"
+            else:
+                header_prompt = "\n# " + tokenizer.decode(
+                    [dataset_test[i]['input_ids'] for i in batch_indices][k]) + "\n\n"
             code = codecs.unicode_escape_decode(sample)[0]
 
             if not os.path.exists("./temp_files"):
@@ -81,7 +90,7 @@ def collect_rewards(samples: List[str],
     else:
         print("Average Rewards collected:", sum(reward_list_during_epoch) / len(reward_list_during_epoch))
         avg_rewards.append(sum(reward_list_during_epoch) / len(reward_list_during_epoch))
-    return collected
+    return collected, avg_rewards
 
 
 def compilable(temp_file_path: str) -> int:
@@ -127,7 +136,7 @@ def pep08(temp_file_path: str) -> int:
         except Exception as e:
             print(f"An error occurred while checking the code: {e}")
 
-    # print(f"Pep08 Errors in file {temp_file_path}: {output}")
+    print(f"Pep08 Errors in file {temp_file_path}: {output}")
 
     if num_errors == 0:
         reward = 10
@@ -135,6 +144,10 @@ def pep08(temp_file_path: str) -> int:
         reward = -num_errors
 
     return reward
+
+
+def test_list(temp_file_path: str, dataset_test_list: torch.utils.data.Dataset) -> int:
+    return 0
 
 # ==================== Code Metrics =====================
 # (from https://radon.readthedocs.io/en/latest/intro.html)

@@ -38,32 +38,22 @@ def sample_from_dataset(dataset: Dataset, num_samples: int) -> Dataset:
     return samples
 
 
-def load_gen_data(file_path: str, tokenizer: AutoTokenizer, block_size: int = 128) -> Dataset:
-    with open(file_path, "r") as jfile:
-        data = [json.loads(line) for line in jfile]
+def load_gen_data(file_path: str, tokenizer: AutoTokenizer) -> Dataset:
+    with open(file_path, "r") as file:
+        data = [json.loads(line) for line in file]
 
     data_dicts = {"input_ids": [tokenizer.encode(entry["text"]) for entry in data],
-                   "labels": [tokenizer.encode(entry["code"]) for entry in data]}
+                  "labels": [tokenizer.encode(entry["code"]) for entry in data]}
 
     dataset = Dataset.from_dict(data_dicts)
     return dataset
 
 
-def _group_texts(samples: dict, block_size: int) -> dict:
-    # Concatenate all texts.
-    concatenated_samples = {k: sum(samples[k], []) for k in samples.keys()}
-    total_length = len(concatenated_samples[list(samples.keys())[0]])
+def load_test_list(file_path: str, tokenizer: AutoTokenizer) -> Dataset:
+    with open(file_path, "r") as jfile:
+        data = [json.loads(line) for line in jfile]
 
-    # We drop the small remainder, we could add padding if the model supported it instead of this drop, you can
-    # customize this part to your needs.
-    if total_length >= block_size:
-        total_length = (total_length // block_size) * block_size
+    test_list = {"test_list": [tokenizer.encode(str(entry["test_list"])) for entry in data]}
 
-    # Split by chunks of block_size.
-    result = {
-        k: [t[i: i + block_size] for i in range(0, total_length, block_size)]
-        for k, t in concatenated_samples.items()
-    }
-
-    result["labels"] = result["input_ids"].copy()
-    return result
+    test_list_dataset = Dataset.from_dict(test_list)
+    return test_list_dataset
