@@ -1,5 +1,7 @@
 import os.path
 import shutil
+import gc
+from statistics import mean
 
 from torch import Tensor
 from argparse import Namespace
@@ -82,8 +84,7 @@ class GANTrainer:
         self.adv_loss = torch.nn.CrossEntropyLoss()
         self.optimizer = torch.optim.AdamW(self.discriminator.parameters(), lr=self.cfg.disc_lr)
         print(" >> read data")
-        self.dataset_train = load_gen_data(os.path.join(self.cfg.data_dir, "train.json"), self.tokenizer, self.device,
-                                           train=True)
+        self.dataset_train = load_gen_data(os.path.join(self.cfg.data_dir, "train.json"), self.tokenizer, train=True)
         # self.dataset_test = load_gen_data(os.path.join(self.cfg.data_dir, "test.json"), self.tokenizer, self.device, train=False)
 
     # def gen_pretrain(self) -> None:
@@ -115,12 +116,13 @@ class GANTrainer:
         avg_rewards = []
         for epoch in range(self.cfg.num_adv_epochs):
             print(f" --- Epoch {epoch}: Generator ---")
-            gen_stats, avg_rewards = self._gen_adv_train(epoch, avg_rewards)
+            avg_rewards = self._gen_adv_train(epoch, avg_rewards)
+            print("Average reward: ", avg_rewards[epoch])
             print(f" --- Epoch {epoch}: Discriminator---")
             disc_stats = self._disc_adv_train()
             print(" > ", disc_stats)
             print(f" -----------------------------------")
-        print("Average Rewards for each of the epochs: ", avg_rewards)
+        print("Average Rewards for the epochs: ", avg_rewards)
 
         if self.cfg.save_RL:
             print(" >> save RL model")
@@ -136,31 +138,32 @@ class GANTrainer:
             if os.path.exists('./temp_files'):
                 shutil.rmtree('./temp_files')
 
-    def _gen_adv_train(self, current_epoch: int, avg_rewards: list) -> tuple[dict, list]:
+    def _gen_adv_train(self, current_epoch: int, avg_rewards: list) -> list:
         data = DataLoader(dataset=self.dataset_train, batch_size=self.cfg.batch_size, shuffle=True, drop_last=True)
         padding_length = get_index_length_datasets(train=True)
-        for batch in data:
+        for batch_number, batch in enumerate(data):
             prompts_tensor = [prompt.to(torch.int64).to(self.device) for prompt in
                               torch.unbind(batch['prompts'], dim=0)]
             prompts_txt = self.tokenizer.batch_decode(prompts_tensor, skip_special_tokens=True)
-            test_list_tensor = [test_list.to(torch.int64).to(self.device) for test_list in
-                                torch.unbind(batch['test_list'], dim=0)]
-
-            test_list_decoded = self.tokenizer.batch_decode(test_list_tensor, skip_special_tokens=True)
-
             generation_tensor = self.ppo_trainer.generate(query_tensor=prompts_tensor, return_prompt=False,
                                                           **self.generation_kwargs)
-            print(generation_tensor)
             generated_txts = self.tokenizer.batch_decode(generation_tensor, skip_special_tokens=True)
             rewards, avg_rewards = get_rewards(generation_text=generated_txts, discriminator=self.discriminator,
                                                current_epoch=current_epoch, avg_rewards=avg_rewards,
-                                               prompts=prompts_txt, test_list=test_list_decoded,
+                                               prompts=prompts_txt,
                                                tokenizer=self.tokenizer, device=self.device,
                                                padding_length=padding_length)
             rewards = [reward.detach().to(self.device) for reward in rewards]
-            train_stats = self.ppo_trainer.step(prompts_tensor, generation_tensor, rewards)
+            self.ppo_trainer.step(prompts_tensor, generation_tensor, rewards)
+            del prompts_tensor
+            del prompts_txt
+            del generation_tensor
+            del generated_txts
+            del rewards
+            gc.collect()
         self.generator.save_pretrained(os.path.join(self.cfg.gen_dir, "generator"))
-        return train_stats, avg_rewards
+        avg_rewards = [mean(avg_rewards)]  # mean(avg_reward per batch) = avg_reward(epoch)
+        return avg_rewards
 
     def _disc_adv_train(self) -> dict:
         directory_path = "./save/huggan/gen/generator"
@@ -180,8 +183,7 @@ class GANTrainer:
             pretrained_model_name_or_path=self.cfg.gen_dir + "generator").to(self.device)
 
         dataset_disc = prepare_data(lm_generator, self.dataset_train,
-                                    self.cfg.num_samples, self.generation_kwargs, self.device, self.tokenizer,
-                                    train=True)
+                                    self.cfg.num_samples, self.generation_kwargs, self.tokenizer, train=True)
         data = DataLoader(dataset=dataset_disc, batch_size=self.cfg.batch_size, shuffle=True, drop_last=True)
         total_loss = 0
         total_acc = 0
@@ -203,6 +205,9 @@ class GANTrainer:
             total_loss += loss.item()
             total_acc += (classification.argmax(dim=-1) == classes_decoded_int).sum().item()
             total_num += len(classes_decoded_int)
+            del samples
+            del classes_decoded_int
+            gc.collect()
         total_loss /= len(data)
         total_acc /= total_num
         torch.save(self.discriminator.state_dict(), os.path.join(self.cfg.disc_dir, "discriminator.pt"))

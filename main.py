@@ -15,13 +15,13 @@ def parse_args() -> Namespace:
     # ToDo: read defaults from config file
     parser.add_argument('--gpu', default=1, type=int,
                         help="whether to use gpu")
-    parser.add_argument('--num_adv_epochs', default=1, type=int,
+    parser.add_argument('--num_adv_epochs', default=100, type=int,
                         help="number of epochs for adversarial training")
-    parser.add_argument('--batch_size', default=2, type=int,
+    parser.add_argument('--batch_size', default=32, type=int,
                         help="batch size for adversarial generator and discriminator training")
     parser.add_argument('--data_dir', default="", type=str,
                         help="training data directory")
-    parser.add_argument('--save_RL', default=0, type=int,
+    parser.add_argument('--save_RL', default=1, type=int,
                         help="save the model after training")
     parser.add_argument('--delete_temp_files', default=0, type=int,
                         help="delete temporary files after training")
@@ -91,8 +91,8 @@ if __name__ == "__main__":
 
     trainer = GANTrainer(args)
 
-    if args.pretrain:
-        trainer.gen_pretrain()
+    # if args.pretrain:
+    #     trainer.gen_pretrain()
 
     if args.adversarial:
         start_time = time.time()

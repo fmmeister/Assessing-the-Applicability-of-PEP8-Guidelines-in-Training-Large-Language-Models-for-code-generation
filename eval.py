@@ -17,7 +17,7 @@ from pycodestyle import Checker
 from data import GeneratorDataset, DiscriminatorDataset
 
 
-def get_rewards(generation_text: List[str], device, test_list: List[str],
+def get_rewards(generation_text: List[str], device,
                 discriminator: torch.nn.Module, current_epoch: int, avg_rewards: list,
                 tokenizer: AutoTokenizer, prompts: List[str], padding_length: dict,
                 disc_weight: int = 1) -> tuple[torch.Tensor, List[float]]:
@@ -31,7 +31,7 @@ def get_rewards(generation_text: List[str], device, test_list: List[str],
     # print(" >> rewards ", disc_reward)
 
     obj_rewards, avg_rewards = collect_rewards(generation_text, discount=1, current_epoch=current_epoch,
-                                               avg_rewards=avg_rewards, prompts=prompts, test_list=test_list)
+                                               avg_rewards=avg_rewards, prompts=prompts)
 
     obj_rewards = obj_rewards.to(disc_reward.device)
 
@@ -42,7 +42,7 @@ def get_rewards(generation_text: List[str], device, test_list: List[str],
 def collect_rewards(samples: List[str],
                     current_epoch: int,
                     avg_rewards: List[float],
-                    prompts: List[str], test_list: List[str],
+                    prompts: List[str],
                     discount: float = 1.0) -> tuple[torch.Tensor, List[float]]:
     """
     Compute the weighted sum specified metrics for the list of samples.
@@ -73,13 +73,13 @@ def collect_rewards(samples: List[str],
 
             # compile_reward = compilable(temp_file_path)  # compilable reward
 
-            test_list_reward = try_test_list(temp_file_path, test_list[k])  # test_list reward
+            # test_list_reward = try_test_list(temp_file_path, test_list[k])  # test_list reward
 
             with open(temp_file_path, "a") as temp_file:
-                temp_file.write("\n\n# Errorcodes: " + str(output) + "\n# pep08_reward: " + str(pep08_reward) +
-                                "\n# test_list_reward: " + str(test_list_reward))
+                temp_file.write("\n\n# Errorcodes: " + str(output) + "\n# pep08_reward: " + str(pep08_reward))# +
+                                # "\n# test_list_reward: " + str(test_list_reward))
 
-            combined_reward = pep08_reward + test_list_reward
+            combined_reward = pep08_reward #+ test_list_reward
 
             reward_list_during_epoch.append(combined_reward)
             rewards = torch.tensor(combined_reward)
@@ -90,7 +90,6 @@ def collect_rewards(samples: List[str],
     if not reward_list_during_epoch:
         print("No rewards collected")
     else:
-        print("Average Rewards collected:", sum(reward_list_during_epoch) / len(reward_list_during_epoch))
         avg_rewards.append(sum(reward_list_during_epoch) / len(reward_list_during_epoch))
     return collected, avg_rewards
 
