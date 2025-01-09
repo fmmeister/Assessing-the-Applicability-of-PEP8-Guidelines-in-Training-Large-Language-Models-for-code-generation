@@ -1,59 +1,137 @@
 import json
 import random
 
+import pandas as pd
 import torch
-from datasets import Dataset, interleave_datasets
+from torch import Tensor
+from torch.utils.data import Dataset
+from datasets import interleave_datasets
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from trl import AutoModelForCausalLMWithValueHead
 
 
-def prepare_data(generator: AutoModelForCausalLM,
-                 ground_dataset: Dataset, num_samples: int,
-                 gen_args: dict) -> Dataset:
+class GeneratorDataset(Dataset):
+    def __init__(self, data: dict, device, tokenizer, padding_length):
+        self.device = device
+        self.tokenizer = tokenizer
+        self.padding_length = padding_length
+        self.prompts = torch.Tensor(tokenizer(data['prompts'], padding='max_length', max_length=padding_length['prompts'])['input_ids']).to(device)
+        self.code = torch.Tensor(tokenizer(data['code'], padding='max_length', max_length=padding_length['code'])['input_ids']).to(device)
+        self.test_list = torch.Tensor(tokenizer(data['test_list'], padding='max_length', max_length=padding_length['test_list'])['input_ids']).to(device)
+
+    def __len__(self):
+        return len(self.prompts)
+
+    def __getitem__(self, idx):
+        return {'prompts': self.prompts[idx],
+                'code': self.code[idx],
+                'test_list': self.test_list[idx]}
+
+    def select_for_discriminator(self, indices, tokenizer, padding_length, ground_truth=None):
+        self.code = list(torch.unbind(Tensor.int(self.code), dim=0))
+        self.code = tokenizer.batch_decode(self.code)
+        return DiscriminatorDataset({"code": [self.code[i] for i in indices],
+                                     "ground_truth": [ground_truth for _ in indices]},
+                                    device=self.device, tokenizer=tokenizer, padding_length=padding_length)
+
+
+class DiscriminatorDataset(Dataset):
+    def __init__(self, data: dict, device, tokenizer, padding_length):
+        self.device = device
+        self.tokenizer = tokenizer
+        self.padding_length = padding_length
+        self.code = torch.Tensor(tokenizer(data['code'], padding='max_length', max_length=padding_length['code'])['input_ids']).to(device)
+        self.ground_truth = torch.Tensor(tokenizer(data['ground_truth'], padding='max_length', max_length=padding_length['code'])['input_ids']).to(device)
+
+    def __len__(self):
+        return len(self.code)
+
+    def __getitem__(self, idx):
+        return {'code': self.code[idx],
+                'ground_truth': self.ground_truth[idx]}
+
+    def __add__(self, other):
+        self.code = list(torch.unbind(Tensor.int(self.code), dim=0))
+        self.code = self.tokenizer.batch_decode(self.code)
+
+        other.code = list(torch.unbind(Tensor.int(other.code), dim=0))
+        other.code = other.tokenizer.batch_decode(other.code)
+
+        self.ground_truth = list(torch.unbind(Tensor.int(self.ground_truth), dim=0))
+        self.ground_truth = self.tokenizer.batch_decode(self.ground_truth)
+
+        other.ground_truth = list(torch.unbind(Tensor.int(other.ground_truth), dim=0))
+        other.ground_truth = other.tokenizer.batch_decode(other.ground_truth)
+
+        return DiscriminatorDataset(
+            {"code": self.code + other.code, "ground_truth": self.ground_truth + other.ground_truth},
+            self.device, self.tokenizer, self.padding_length)
+
+    @staticmethod
+    def interleave(dataset_generated, dataset_groundtruth, num_samples, device, tokenizer, padding_length):
+        if len(dataset_generated) == len(dataset_groundtruth):
+            sample_ids = random.sample(range(len(dataset_groundtruth) + len(dataset_generated)), num_samples)
+            interleave_dataset = dataset_generated + dataset_groundtruth
+
+            interleave_dataset.code = list(torch.unbind(Tensor.int(interleave_dataset.code), dim=0))
+            interleave_dataset.code = tokenizer.batch_decode(interleave_dataset.code)
+
+            interleave_dataset.ground_truth = list(torch.unbind(Tensor.int(interleave_dataset.ground_truth), dim=0))
+            interleave_dataset.ground_truth = tokenizer.batch_decode(interleave_dataset.ground_truth)
+
+            return DiscriminatorDataset({"code": [interleave_dataset.code[i] for i in sample_ids],
+                                         "ground_truth": [interleave_dataset.ground_truth[i] for i in sample_ids]},
+                                        device=device, tokenizer=tokenizer, padding_length=padding_length)
+        else:
+            return Exception
+
+
+def get_index_length_datasets(train: bool):
+    if train:
+        return {'prompts': 49, 'code': 252, 'test_list': 302}
+    else:
+        return None
+
+
+def prepare_data(generator: AutoModelForCausalLMWithValueHead,
+                 ground_dataset: GeneratorDataset, num_samples: int,
+                 gen_args: dict, device, tokenizer: AutoTokenizer, train: bool) -> DiscriminatorDataset:
     gen_args['num_return_sequences'] = num_samples
-    gen_dataset = create_gen_dataset(generator, gen_args)
 
-    ground_samples = sample_from_dataset(ground_dataset, num_samples)
+    padding_length = get_index_length_datasets(train)
 
-    dataset = interleave_datasets([gen_dataset, ground_samples],
-                                  stopping_strategy="all_exhausted")
-
+    generated_samples = sample_from_generation(generator, gen_args, device, tokenizer, padding_length)
+    ground_truth_samples = sample_from_dataset(ground_dataset, num_samples, tokenizer, padding_length)
+    dataset = DiscriminatorDataset.interleave(generated_samples, ground_truth_samples, num_samples * 2, device, tokenizer, padding_length)
     return dataset
 
 
-def create_gen_dataset(generator: AutoModelForCausalLM, gen_args: dict) -> Dataset:
+def sample_from_generation(generator: AutoModelForCausalLMWithValueHead, gen_args: dict, device, tokenizer: AutoTokenizer, padding_length: dict) -> DiscriminatorDataset:
     with torch.no_grad():
         samples = generator.generate(**gen_args)
 
-    sample_dicts = [{"input_ids": sample,
-                     'labels': 0} for sample in samples]
-    return Dataset.from_list(sample_dicts)
+    samples = tokenizer.batch_decode(samples, skip_special_tokens=True)
+    sample_dicts = {"code": samples, "ground_truth": ["0" for _ in samples]}
+
+    return DiscriminatorDataset(sample_dicts, device=device, tokenizer=tokenizer, padding_length=padding_length)
 
 
-def sample_from_dataset(dataset: Dataset, num_samples: int) -> Dataset:
+def sample_from_dataset(dataset: GeneratorDataset, num_samples: int, tokenizer: AutoTokenizer, padding_length: dict) -> DiscriminatorDataset:
     sample_ids = random.sample(range(len(dataset)), num_samples)
+    samples = dataset.select_for_discriminator(sample_ids, tokenizer, padding_length, ground_truth="1")
 
-    samples = dataset.select(sample_ids)
-    samples = samples.remove_columns('labels')
-    samples = samples.add_column(name='labels', column=[1] * num_samples)
     return samples
 
 
-def load_gen_data(file_path: str, tokenizer: AutoTokenizer) -> Dataset:
+def load_gen_data(file_path: str, tokenizer: AutoTokenizer, device, train: bool) -> GeneratorDataset:
     with open(file_path, "r") as file:
         data = [json.loads(line) for line in file]
 
-    data_dicts = {"input_ids": [tokenizer.encode(entry["text"]) for entry in data],
-                  "labels": [tokenizer.encode(entry["code"]) for entry in data]}
+    data_dicts = {"prompts": [entry["text"] for entry in data],
+                  "code": [entry["code"] for entry in data],
+                  "test_list": [str(entry["test_list"]) for entry in data]}
 
-    dataset = Dataset.from_dict(data_dicts)
+    padding_length = get_index_length_datasets(train)
+
+    dataset = GeneratorDataset(data_dicts, device=device, tokenizer=tokenizer, padding_length=padding_length)
     return dataset
-
-
-def load_test_list(file_path: str, tokenizer: AutoTokenizer) -> Dataset:
-    with open(file_path, "r") as jfile:
-        data = [json.loads(line) for line in jfile]
-
-    test_list = {"test_list": [tokenizer.encode(str(entry["test_list"])) for entry in data]}
-
-    test_list_dataset = Dataset.from_dict(test_list)
-    return test_list_dataset

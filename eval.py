@@ -1,3 +1,5 @@
+import ast
+import importlib.util
 import os
 import re
 import tempfile
@@ -6,28 +8,30 @@ import sys
 import codecs
 from typing import List
 import torch
+from torch import Tensor
 from torch.nn.functional import softmax
+from torch.utils.data import DataLoader
 from transformers import AutoTokenizer
 from pycodestyle import Checker
 
+from data import GeneratorDataset, DiscriminatorDataset
 
-def get_rewards(sample_ids: torch.LongTensor, sample_texts: List[str],
-                discriminator: torch.nn.Module, padding: AutoTokenizer, current_epoch: int, avg_rewards: list,
-                tokenizer: AutoTokenizer, batch_indices: List[int], dataset_train: torch.utils.data.Dataset,
-                dataset_test_list: torch.utils.data.Dataset, train: bool,
-                dataset_test: torch.utils.data.Dataset, disc_weight: int = 1) -> tuple[torch.Tensor, List[float]]:
-    sample_stack = padding.pad({"input_ids": sample_ids},
-                               padding="longest", return_tensors='pt')['input_ids'].to(sample_ids[0].device)
-    pred = discriminator.forward(sample_stack)
+
+def get_rewards(generation_text: List[str], device, test_list: List[str],
+                discriminator: torch.nn.Module, current_epoch: int, avg_rewards: list,
+                tokenizer: AutoTokenizer, prompts: List[str], padding_length: dict,
+                disc_weight: int = 1) -> tuple[torch.Tensor, List[float]]:
+
+    samples = Tensor.int(torch.Tensor(tokenizer(generation_text, padding='max_length', max_length=padding_length['code'])['input_ids']).to(device))
+    discriminator.to(device)
+    pred = discriminator.forward(samples)
     # get predictions for positive class,
     # the more the discriminator is certain, that the sample is real (1), the higher the reward for the generator
     disc_reward = softmax(pred, dim=-1)[:, 1]
     # print(" >> rewards ", disc_reward)
 
-    obj_rewards, avg_rewards = collect_rewards(sample_texts, discount=1, current_epoch=current_epoch,
-                                               avg_rewards=avg_rewards, dataset_train=dataset_train,
-                                               dataset_test_list=dataset_test_list, dataset_test=dataset_test,
-                                               tokenizer=tokenizer, batch_indices=batch_indices, train=train)
+    obj_rewards, avg_rewards = collect_rewards(generation_text, discount=1, current_epoch=current_epoch,
+                                               avg_rewards=avg_rewards, prompts=prompts, test_list=test_list)
 
     obj_rewards = obj_rewards.to(disc_reward.device)
 
@@ -37,9 +41,8 @@ def get_rewards(sample_ids: torch.LongTensor, sample_texts: List[str],
 
 def collect_rewards(samples: List[str],
                     current_epoch: int,
-                    avg_rewards: List[float], dataset_train: torch.utils.data.Dataset,
-                    tokenizer: AutoTokenizer, dataset_test_list: torch.utils.data.Dataset,
-                    batch_indices: List[int], train: bool, dataset_test: torch.utils.data.Dataset,
+                    avg_rewards: List[float],
+                    prompts: List[str], test_list: List[str],
                     discount: float = 1.0) -> tuple[torch.Tensor, List[float]]:
     """
     Compute the weighted sum specified metrics for the list of samples.
@@ -50,36 +53,35 @@ def collect_rewards(samples: List[str],
     (I use this in the reinforcement learning as implemented in SeqGan)
     :return: list of rewards for the given samples as float
     """
-
     collected = torch.zeros(len(samples))
     reward_list_during_epoch = []
     for k, sample in enumerate(samples):
 
         try:
-            if train:
-                header_prompt = "\n# " + tokenizer.decode(
-                    [dataset_train[i]['input_ids'] for i in batch_indices][k]) + "\n\n"
-            else:
-                header_prompt = "\n# " + tokenizer.decode(
-                    [dataset_test[i]['input_ids'] for i in batch_indices][k]) + "\n\n"
+            header_prompt = "\n# " + prompts[k] + "\n\n"
             code = codecs.unicode_escape_decode(sample)[0]
 
             if not os.path.exists("./temp_files"):
                 os.makedirs("./temp_files")
-            # print("current_epoch_pep08", current_epoch)
             with tempfile.NamedTemporaryFile(delete=False, suffix=".py", dir="./temp_files",
                                              prefix="Epoch " + str(current_epoch) + "_") as temp_file:
                 temp_file.write(header_prompt.encode('utf-8'))
                 temp_file.write(code.encode('utf-8'))
                 temp_file_path = temp_file.name
 
-            pep08_reward = pep08(temp_file_path)
-            reward_list_during_epoch.append(pep08_reward)
+            pep08_reward, output = pep08(temp_file_path)  # pep8 reward and output
 
-            compile_reward = compilable(temp_file_path)
+            # compile_reward = compilable(temp_file_path)  # compilable reward
 
-            combined_reward = pep08_reward + compile_reward
+            test_list_reward = try_test_list(temp_file_path, test_list[k])  # test_list reward
 
+            with open(temp_file_path, "a") as temp_file:
+                temp_file.write("\n\n# Errorcodes: " + str(output) + "\n# pep08_reward: " + str(pep08_reward) +
+                                "\n# test_list_reward: " + str(test_list_reward))
+
+            combined_reward = pep08_reward + test_list_reward
+
+            reward_list_during_epoch.append(combined_reward)
             rewards = torch.tensor(combined_reward)
             collected[k] = torch.sum(torch.tensor(rewards)) * torch.pow(torch.tensor(discount), torch.tensor(k))
         except UnicodeDecodeError:
@@ -123,7 +125,7 @@ class Capturing(list):
         self.extend(re.findall(error_code_pattern, self.pep08_output))
 
 
-def pep08(temp_file_path: str) -> int:
+def pep08(temp_file_path: str) -> tuple[int, List[str]]:
     """
     How much does the code adhere to pep08 standards.
     Could potentially be more elaborated by utilizing the specific messages in output.
@@ -136,18 +138,47 @@ def pep08(temp_file_path: str) -> int:
         except Exception as e:
             print(f"An error occurred while checking the code: {e}")
 
-    print(f"Pep08 Errors in file {temp_file_path}: {output}")
+    # print(f"Pep08 Errors in file {temp_file_path}: {output}")
 
     if num_errors == 0:
-        reward = 10
+        reward = 100
     else:
         reward = -num_errors
 
-    return reward
+    return reward, output
 
 
-def test_list(temp_file_path: str, dataset_test_list: torch.utils.data.Dataset) -> int:
-    return 0
+def try_test_list(temp_file_path: str, test_list: str) -> int:
+
+    spec = importlib.util.spec_from_file_location(temp_file_path, "./temp_files/" + temp_file_path)
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except Exception as e:
+        return -4  # Error loading the file
+
+    functions = [func for func in dir(module) if callable(getattr(module, func))]
+    if not functions:
+        return -3  # No functions found in the file.
+
+    for func_name in functions:
+        func = getattr(module, func_name)
+        if callable(func):
+            target_function = func
+            break
+        else:
+            pass
+
+        test_list = ast.literal_eval(test_list)
+        try:
+            for test in test_list:
+                exec(test)
+            return 100  # All tests passed!
+        except AssertionError:
+            return -1  # A test failed!
+    else:
+        return -2  # No matching function found.
+
 
 # ==================== Code Metrics =====================
 # (from https://radon.readthedocs.io/en/latest/intro.html)

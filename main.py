@@ -1,9 +1,11 @@
 import json
+import os
 import os.path
 import time
 from argparse import ArgumentParser, Namespace
 from time import gmtime, strftime
 
+# from trash_trainer import GANTrainer
 from eval import compilable, pep08
 from trainer import GANTrainer
 
@@ -11,21 +13,21 @@ from trainer import GANTrainer
 def parse_args() -> Namespace:
     parser = ArgumentParser()
     # ToDo: read defaults from config file
-    parser.add_argument('--gpu', default=0, type=int,
+    parser.add_argument('--gpu', default=1, type=int,
                         help="whether to use gpu")
     parser.add_argument('--num_adv_epochs', default=1, type=int,
                         help="number of epochs for adversarial training")
-    parser.add_argument('--batch_size', default=64, type=int,
+    parser.add_argument('--batch_size', default=2, type=int,
                         help="batch size for adversarial generator and discriminator training")
     parser.add_argument('--data_dir', default="", type=str,
                         help="training data directory")
     parser.add_argument('--save_RL', default=0, type=int,
                         help="save the model after training")
-    parser.add_argument('--delete_temp_files', default=1, type=int,
+    parser.add_argument('--delete_temp_files', default=0, type=int,
                         help="delete temporary files after training")
-    parser.add_argument('--eval', default=1, type=int,
+    parser.add_argument('--eval', default=0, type=int,
                         help="evaluate the model")
-    parser.add_argument('--adversarial', default=0, type=int,
+    parser.add_argument('--adversarial', default=1, type=int,
                         help="whether to perform adversarial training")
 
     # Pretraining:
@@ -47,8 +49,6 @@ def parse_args() -> Namespace:
                              "if no local pretrained model is provided")
     parser.add_argument('--max_new_tokens', default=200, type=int,
                         help="max number of tokens for generator to produce during adversarial training")
-    parser.add_argument('--n_samples', default=20, type=int,
-                        help="number of samples to generate after pretraining and each adversarial training epoch")
     # Discriminator:
     parser.add_argument('--disc_dir', default="./save/huggan/dis", type=str,
                         help="directory from which to load and to which to save the trained discriminator state_dict")
@@ -60,16 +60,12 @@ def parse_args() -> Namespace:
                         help="listing of filter sizes for discriminator convolutional layers")
     parser.add_argument('--num_filters', default="100,200,200,200,200,100,100,100,100,100,160,160", type=str,
                         help="listing of filter sizes for discriminator convolutional layers")
-    parser.add_argument('--dis_init', default="uniform", type=str,
-                        help="discriminator weight initialization: normal, uniform, truncated_normal")
     parser.add_argument('--dropout', default=0.25, type=float,
                         help="dropout rate for discriminator")
     parser.add_argument('--disc_lr', default=1e-2, type=float,
                         help="adversarial learning rate for discriminator")
     parser.add_argument('--num_samples', default=32, type=int,
                         help="number of generated samples to include for each epoch of discriminator training")
-    parser.add_argument('--disc_steps', default=1, type=int,
-                        help="discriminator training steps for each adversarial epoch")
     parser.add_argument('--clip_norm', default=5.0, type=float,
                         help="number of epochs for generator pretraining")
 
@@ -93,19 +89,17 @@ if __name__ == "__main__":
         print(" > makedirs", args.disc_dir)
         os.makedirs(args.disc_dir, exist_ok=True)
 
-    start_time = time.time()
-
     trainer = GANTrainer(args)
 
     if args.pretrain:
         trainer.gen_pretrain()
 
     if args.adversarial:
+        start_time = time.time()
         trainer.adversarial_train()
+        end_time = time.time()
+        elapsed_time = (end_time - start_time) / 3600
+        print(f"Ausführungszeit adversarial training: {elapsed_time:.2f} Stunden")
 
     if args.eval:
         trainer.eval(9999, [])
-
-    end_time = time.time()
-    elapsed_time = (end_time - start_time) / 60
-    print(f"Ausführungszeit: {elapsed_time:.2f} Minuten")
