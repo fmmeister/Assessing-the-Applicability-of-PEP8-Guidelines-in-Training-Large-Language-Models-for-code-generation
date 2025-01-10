@@ -18,7 +18,7 @@ from data import GeneratorDataset, DiscriminatorDataset
 
 
 def get_rewards(generation_text: List[str], device,
-                discriminator: torch.nn.Module, current_epoch: int, avg_rewards: list,
+                discriminator: torch.nn.Module, current_epoch: int, avg_rewards_during_batches: list,
                 tokenizer: AutoTokenizer, prompts: List[str], padding_length: dict,
                 disc_weight: int = 1) -> tuple[torch.Tensor, List[float]]:
 
@@ -31,7 +31,7 @@ def get_rewards(generation_text: List[str], device,
     # print(" >> rewards ", disc_reward)
 
     obj_rewards, avg_rewards = collect_rewards(generation_text, discount=1, current_epoch=current_epoch,
-                                               avg_rewards=avg_rewards, prompts=prompts)
+                                               avg_rewards_during_batches=avg_rewards_during_batches, prompts=prompts)
 
     obj_rewards = obj_rewards.to(disc_reward.device)
 
@@ -41,7 +41,7 @@ def get_rewards(generation_text: List[str], device,
 
 def collect_rewards(samples: List[str],
                     current_epoch: int,
-                    avg_rewards: List[float],
+                    avg_rewards_during_batches: List[float],
                     prompts: List[str],
                     discount: float = 1.0) -> tuple[torch.Tensor, List[float]]:
     """
@@ -90,8 +90,8 @@ def collect_rewards(samples: List[str],
     if not reward_list_during_epoch:
         print("No rewards collected")
     else:
-        avg_rewards.append(sum(reward_list_during_epoch) / len(reward_list_during_epoch))
-    return collected, avg_rewards
+        avg_rewards_during_batches.append(sum(reward_list_during_epoch) / len(reward_list_during_epoch))
+    return collected, avg_rewards_during_batches
 
 
 def compilable(temp_file_path: str) -> int:

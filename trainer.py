@@ -141,6 +141,7 @@ class GANTrainer:
     def _gen_adv_train(self, current_epoch: int, avg_rewards: list) -> list:
         data = DataLoader(dataset=self.dataset_train, batch_size=self.cfg.batch_size, shuffle=True, drop_last=True)
         padding_length = get_index_length_datasets(train=True)
+        avg_rewards_during_batches = []
         for batch_number, batch in enumerate(data):
             prompts_tensor = [prompt.to(torch.int64).to(self.device) for prompt in
                               torch.unbind(batch['prompts'], dim=0)]
@@ -148,8 +149,8 @@ class GANTrainer:
             generation_tensor = self.ppo_trainer.generate(query_tensor=prompts_tensor, return_prompt=False,
                                                           **self.generation_kwargs)
             generated_txts = self.tokenizer.batch_decode(generation_tensor, skip_special_tokens=True)
-            rewards, avg_rewards = get_rewards(generation_text=generated_txts, discriminator=self.discriminator,
-                                               current_epoch=current_epoch, avg_rewards=avg_rewards,
+            rewards, avg_rewards_during_batches = get_rewards(generation_text=generated_txts, discriminator=self.discriminator,
+                                               current_epoch=current_epoch, avg_rewards_during_batches=avg_rewards_during_batches,
                                                prompts=prompts_txt,
                                                tokenizer=self.tokenizer, device=self.device,
                                                padding_length=padding_length)
@@ -162,7 +163,8 @@ class GANTrainer:
             del rewards
             gc.collect()
         self.generator.save_pretrained(os.path.join(self.cfg.gen_dir, "generator"))
-        avg_rewards = [mean(avg_rewards)]  # mean(avg_reward per batch) = avg_reward(epoch)
+        avg_rewards_during_epoch = mean(avg_rewards_during_batches)  # mean(avg_reward per batch) = avg_reward(epoch)
+        avg_rewards.append(avg_rewards_during_epoch)
         return avg_rewards
 
     def _disc_adv_train(self) -> dict:
