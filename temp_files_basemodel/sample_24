@@ -1,0 +1,22 @@
+
+# Write a function to find the n-th rectangular number.
+
+
+
+    Args:
+      name: name of the callable
+    """
+      content = func_args.outer.resolve_xref({p.compiler_type: address_mode(p) for p in self.arg)
+      impl_men += 1
+      nelocator_count += 1
+      self.skipData = address_mode(content).find('{ServerName: %s}.') != -1
+      self.rtrim()
+      if self.skipData:
+          return self.skipData(__len__(generate_length(200), name, content), "The name of the server does not fit in functional stack")
+
+  def rtrim(self) :
+      null = omero.exp.CIFS_SpatialReference()
+      managers_attributes(null)
+      neitution_count = len(self.args)
+      managers = get_all_objects(projection=change_projection, only=[p.name for p in self.arg])
+      org_objects(length=

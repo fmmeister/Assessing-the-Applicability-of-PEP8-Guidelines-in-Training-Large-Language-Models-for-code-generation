@@ -1,0 +1,13 @@
+
+# Write a function to find the gcd of the given array elements.
+
+ """
+        buf = triplet2numpy(self._configFile, array_in, y_axis))
+        if type(self._readBuffer) in [ListType]:
+            self._readBuffer[0] * array_out = subprocess.Popen(['/usr/bin/xblt', buf[0]], stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
+        if type(self._readBuffer) in [TupleType]:
+            self._readBuffer = [nexus.item(v[0], v[1]) for v in array_out[2] ]
+        if type(self._readBuffer) in self.xarray:
+            self.xarray[tupleValues] = int( "0x" + parts[3:] ) & 0xff )
+        if type(self._readBuffer) in self.readExpression: 
+            btn255 = [ type(self.readExpression[y_array.fcode(sys.stdout

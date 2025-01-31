@@ -1,0 +1,23 @@
+
+# Write a function to find number of lists present in the given tuple.
+
+
+	"""
+	widthBits = len(unresolvedPoints) % 4
+
+	def openList(self, s):
+		def openList(w):
+			return parseErrorLogsNode(open(w[1], 'rb'), self.fsVersion.get() == 2)
+			if w[widthBits] != 1<<8:
+				raise ValueError("Only one address per list is currently supported.")
+		return listXNames(s[0])
+		return None
+		# handle endianness with float
+		# see https://bugs.pythonware.org/details/2470304, this was first renaming from {known types} to {x endianness}
+	def createInstance(self, availLen):
+		classTimeout, CloseTime:
+			def __init__(self, takeAmount=None):
+				if takeAmount is None:
+					t = 'bad'
+				else:
+					if

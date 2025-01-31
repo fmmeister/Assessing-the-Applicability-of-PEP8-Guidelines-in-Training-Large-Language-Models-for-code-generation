@@ -1,0 +1,22 @@
+
+# Write a function to find sum of the numbers in a list between the indices of a specified range.
+
+ The tone lists
+        # max, min containing nan delta. Do not use if any type of flux is exceeded.
+        def set_minus_node_edge_tol(self, fix_leader=False):
+            """Set function length from 1e-6."""
+            if fix_leader:
+                self._load_nucl()
+
+            node_df = pycbc.states.OptionalNodeUV(ffts["clfld_data"],
+                                                      team_name=ffts["clfld_zname"])
+
+            if "badToneData" in ffts:
+                raise TranslationSoldierInteractionError(
+                    "Cannot set replacing tone data without duplicates."
+                )
+
+            if "minNuclearData" in ffts:
+                for node in self.states:
+                    ZvMod.set_task_nonlinearity_nonlocal(0)
+                    if hasattr(node, "removePausteUpscaleCandidate") and node.removePausteUp

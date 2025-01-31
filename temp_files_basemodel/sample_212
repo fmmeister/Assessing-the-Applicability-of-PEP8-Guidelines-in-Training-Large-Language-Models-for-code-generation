@@ -1,0 +1,20 @@
+
+# Write a function to check for majority element in the given sorted array.
+
+
+
+            self._grid.addWidget(plot_data.GetSection(0, QSizePolicy.Minimum, qtutils.QItemSelectionModel.AllWacers, Qt.Right | QtCore.Qt.StartButton)
+
+        self._db = db
+        self._df = QtGui.QFrame(adjab_data)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        w_factor = 50.0
+        
+        self._db.setSizePolicy(size)
+        self._db.setPiecewise(True)
+        self._db.setBezier(True)
+        self._db.setFx(grid_wfs)
+        self._db.fy(grid_qx)
+        grid_wfs.setFrameByShadow(False)
+        
+        self._ZoomTomosphericData.zoomToMeshFlag.connect(self._ZoomToMeshFlagGenericbasemap, QtCore.SIGNAL('LayersChanged(int,

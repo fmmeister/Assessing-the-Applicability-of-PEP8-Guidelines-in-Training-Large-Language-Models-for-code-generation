@@ -1,0 +1,22 @@
+
+# Write a function to extract the ranges that are missing from the given list with the given start range and end range values.
+
+ If there was
+        a failure, use the empty tuple as the range and 'inclusive_start' sets to True.
+        """
+        for i in range(self.shape[0]):
+            if self.shape == (1, 0 or idx < self.shape[0], len(self.data.dtype) == 0) and self.data.ndim > 1:
+                extend = self.shape[1] - 1
+                else:
+                    nw = self.data.shape
+      if index_type != 'bam':
+          self._uploadStartRangeCheckMatchDir(index_type, nw)
+      
+      if l_output:
+            l_output.print_statistics()
+
+    def _extractProtchr(self, labelFASTQ, readA holder, l_score_supported):
+        """ Extract the assignment from annotation-seq followed by methicals.
+        
+        The first and second colors appear as: 
+        CYAN, CYAN, BLUE, RED,

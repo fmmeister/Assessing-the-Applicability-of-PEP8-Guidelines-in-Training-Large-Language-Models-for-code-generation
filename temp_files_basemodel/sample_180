@@ -1,0 +1,15 @@
+
+# Write a function to check whether the given month name contains 30 days or not.
+
+ Default now')
+    column_data = ['{}: {}'.format(i.strftime('%Y/%m/%d'), i) for i in range(0, 30)]
+    assertEqual(repr(column_data[0])+"00: A month-year must be provided after the start" + row_sep
+    for col in column_data[3:]:
+        assertEqual(u4,col.find(row_sep) != -1, "On next upload the challenge should send the change to Create? "+row_sep+" to {} " + col + "--- which will do need a date at beginning of day {}?")        
+        BaseTestController.send_nonces_and_tags(self, row_id_day, 10, col, years)            
+    
+    body = InputData(T='on next date',  wps_uuid="Password=" + params['password'])
+    
+    for nics in [
+            "i->violence = ["
+           

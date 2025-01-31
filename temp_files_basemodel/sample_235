@@ -1,0 +1,22 @@
+
+# Write a function for computing square roots using the babylonian method.
+
+ "
+                + "options: "
+                + ",".join([str(g) for g in args]))
+            if use_verbose:
+                    print("Found better control atoms:")
+            print(iterable)
+            tol = self.settings.get('BAMLOUTPUTOL', 10.0e-5)
+            oneresd = -1
+            tries = 0
+            for cnt in range(nb_trees):
+                        #dead or suillaged run   
+#        opts = traverse_3d(args[70][cnt], args, nb_results)
+                        num_points = 0
+                        output_partial_arr = [None] * len(args)
+                        handlock=True
+#        for level, label in levelAxis.traverseAxes('scipy', 'M'), levelAxis.levelLabels.items():
+##            if output_partial_arr[level]==0:
+#               output_partial_arr =[hand
+                         for i, df in enumerate

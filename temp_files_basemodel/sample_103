@@ -1,0 +1,19 @@
+
+# Write a function to assign frequency to each tuple in the given tuple list.
+
+ """
+    def write_freq(i):
+        if i not in self.QdtFunctions
+
+#def mesh_analytic(mesh, mode=0):
+    import numpy as np
+    _a0_d, _b1_d, bw = self.QdtFunctions.get_analytic(_i, _bw, False)
+    B = self.nowGetMethodMatrix(_bw)
+    R_d = B[:, 2] / B[:, 0]
+    #delta_b0*R_d = 0.0
+    Xp.multiply(R_d, np.array(i[2:]), for_c0=_a0_d[::2])
+    Xp.multiply(R_d, np.spacing(2), for_c1=_a0_d[::2])
+
+    X.computeCorrelationMatrix([R_d], [A0_d])
+
+#def disableCosculator(label, dbm: Parameter

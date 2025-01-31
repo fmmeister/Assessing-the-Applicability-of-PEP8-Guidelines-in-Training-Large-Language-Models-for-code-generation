@@ -1,0 +1,20 @@
+
+# Write a function to find the ascii value of a character.
+
+ ' \
+                    'Is it </gsatplus.php?param1=750&param2=750>', logger.DEBUG)
+        encode_title_header(title, showList=False)
+
+        newMultiShow.subtitle_filename = filename_XLS
+        newMultiShow.semi_thumb = not(showList) == False
+        newMultiShow.extra = 'play'
+        newMultiShow.scripts = [snatch.renderText(s, True) for s in listeners.toProcessPool(newMultiShow.sort_type)]
+
+        try:
+            if filename_custom.name:
+                if filename_custom['name'] != notNone and filename_custom['name'] != filename_customName:
+                    raise cherrypy.HTTPError(text='Invalid header name format in file.')
+            else:
+                raise cherrypy.HTTPError(text='NONE')
+        except:
+            raise cherrypy.HTTPError(text='ERROR reading info file for description', logger.ERROR)

@@ -1,0 +1,25 @@
+
+# Write a function to check if a binary tree is balanced or not.
+
+
+
+    If false, return the ensemble is defined as silent empty list to 'Not existing' error status.
+
+                   Args
+
+        ``result: List[3|tuple]: binary packages must not contain old and new PCodes as well
+        ================ ===========================================================================
+        tuples: list(packages)
+        pCodes: list(pCodes) for the codes to state
+
+    :param pkgname: A valid entry name. Formatted as ``pkgname=na,pkgname=ok,version=ok,disksize=0,space``
+    :param verbose: The verbosity level to print along with version coverage.
+    """
+        if self._mergedActive == False:
+            return value
+        mergedActive = "condaterm"
+
+        otpFactory.mutate_artifacts(self._mergedDetailed,pkgname=pkgname,newId=[newId],silent=True)
+        overwrites = [tar for tar in self._overwrites]
+
+        for atime in overwrites:

@@ -1,0 +1,23 @@
+
+# Write a function to sort a given matrix in ascending order according to the sum of its rows.
+
+
+
+  Each row passing a Matrix() to Pandas
+        The output_index_columns of all sort columns is correct.
+
+  Examples:
+  # Sort column objects by required field objects.
+  s3.index = s3.customer_agent_id.list_field
+  s3.note_count = 1
+  fields = [
+    ['id', 'S3Text', _request.post_vars['id']],
+    ['name', 'S3Text', _sum.myfile],
+    ['addresses', '16','college_host'],
+    ['cdb_contract_id', 'SBCContractId'],
+    ['host_id.component', 'BTCAnchorAddress.component', 'msgid'],
+    ['lines', '13','datasource_quad'],
+    ['lines', '186','barf'],
+    ['addresses','16','5_tone_7bit_11'],
+  ] for _requests, _sum in (
+    ("order", 17

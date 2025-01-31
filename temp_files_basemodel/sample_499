@@ -1,0 +1,18 @@
+
+# Write a function to find the number of subsequences having product smaller than k for the given non negative array.
+
+ Writing record {} of size {}".format(self.product+1, num_a, k),
+                'start': mod.start}
+        elif self.min_latex:
+            self.f_ksubset = mappings[mod.iset.get('k', 0)]
+        #include the records for which we've identified (there are another batch or one level of sequences in one level)
+        self.detrend = detrend
+        self.alphas = alphas
+        if self.Cs is None:
+            self.Cs = dot(alphas, mod)
+        if self.Cs > 20:
+            self.Cs  = 20
+        self.V = V
+        self.Mi = EdGreedy('Interchanged_sequence_containment', V), mapping['_maxsize']; E']._store(mapping, s) 
+        self.f_start = self.ast['fakename'].split('_')[-1]+[""]
+        d_allexamples = oo_

@@ -1,0 +1,11 @@
+
+# Write a function to convert the given decimal number to its binary equivalent.
+
+ A Satoshi One-View y to an X-idx16 yl
+            tproot('Convert to bytes for optical gas format: %d' % {'x': keypresses.read() if keypresses else 'F', 'y': valuepresses, 'reason': reason},
+                endianness='BIG', depth=0)
+        return value, (self)
+    def __SettingOfSatoshiPlayers(self, keypresses, valuep, depth=0):
+        #   [0x001:1L, 0x002:\xa3a, 0x003:\xad, 0xA9:\xab, D&#82;;&#82; etc.)
+        (value, data), (self) = self.__convert_to_xpi_format(keypresses, 'div', depth=value)
+        #   [0x002:\xa3b, 0xA9:\xa4], D&#

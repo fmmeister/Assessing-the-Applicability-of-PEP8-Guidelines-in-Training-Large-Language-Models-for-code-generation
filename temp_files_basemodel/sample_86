@@ -1,0 +1,15 @@
+
+# Write a function to find frequency count of list of lists.
+
+ Each of the entries is a group of sentences
+    with `*lenient_style_corefaction`, `*paired_style_electronic`, `*pdere.py step`.
+    beame_markup = BeamColourMapping().load_object(beam_style_common.Pattern(regexes_corefaction))
+
+    old_texts = beame_markup.keys()
+    new_texts = {beam_style_api.OBJ_TYPE_ROOMS: [], beam_style_common.OBJ_SADDR_T1: {},
+                           beam_style_api.OBJ_COLOR_TABLE: format_bad_color,
+                           BEAM_LIMIT: format_bad_list.length}
+    for old_type in old_texts:
+        if old_font is not None:
+            old_font.set_font_face(False)
+        new_texts[old_type].append(old_text

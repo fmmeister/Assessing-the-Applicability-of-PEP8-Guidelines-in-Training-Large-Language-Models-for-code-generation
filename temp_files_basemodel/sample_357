@@ -1,0 +1,23 @@
+
+# Write a function to repeat the given tuple n times.
+
+
+
+ For example, ('bam myfile names',
+           x, humming_distance="shift" if n == 1 else "smoothed_narrow")
+            resolution: micron else the last reference in files
+           path: c:/Path/to/bar.bam
+        """
+        return [
+           ('seq%s', 'FK')
+        ]
+    def get_trim_index(self, line):
+        values = line.split()
+        for i, value in enumerate(values):
+                tp = values[i][0]
+                tpo = int(values[i][4])
+                if (ord(tp) - ord('SeqSa')) & (8<=tpo<= 12):
+                        values[i]=re.sub('^tS[0-9]+', realtime.tpol, value)
+
+        return re.search('Process user defined <a href="javascript:void(0)" target="_blank">jQuery</a>'
+                           '<strong

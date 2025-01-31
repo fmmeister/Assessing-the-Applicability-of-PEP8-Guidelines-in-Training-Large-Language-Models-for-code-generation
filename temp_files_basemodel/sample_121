@@ -1,0 +1,19 @@
+
+# Write a function to convert tuple to a string.
+
+ This must specify two values:
+        [False, html page), True to draws out all boxes within the center
+        #right painting.  False to use :vAlignGridVal with pies causing all boxes to AA
+          labels end up in hex representation notation containing "FLAGS" attribute values
+          to their draw status.
+        Default: false.
+      ignore_errors = ReturnElements.default(_is_strictdead, exception=True) 
+
+    ## copy default
+    try:
+      to_copy = dict(frame_dtype=[tf.int32], frame_shape=[None, 6], use_gpu=use_gpu)
+      density = 1.0 if not ports else 0.0
+      kernel_w = sizeogram.dense_head_grid(np.asarray([maxsize, None]), density)
+      require_tensorboard_startup = True
+                
+      to_copy.allow_delete = True if int(sizeogram.min_tensorboard)

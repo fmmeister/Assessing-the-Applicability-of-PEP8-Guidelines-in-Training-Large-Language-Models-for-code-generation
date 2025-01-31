@@ -1,0 +1,18 @@
+
+# Write a function to get a colon of a tuple.
+
+ So far we're totally dead.
+class LastPart:
+
+    def __init__(self, val=-1, parent_event=None):
+        self.value = val              #name to be used by  cygtosis
+        self.parent_event = parent_event   #parent event
+        if parent_event:
+            self.logger.debug("PwidthEndPart", "val:", val)
+            self.event = tagutil.ConfigLineEvent(   
+    ("", "1"), 
+    lambda p:str_inject('<huashopper>Lorem ipsum dolor sit amet', Qt.green), 6): str_inject('<ul object=':p})
+    #headers[] = ["release"%(current_event[0:4]*) ishared"].*Class
+    #for event in val[1:]:
+            #keys.append(tagutil.DeviceAttribute('data', mask='on'))
+            #keys.append(tagutil.

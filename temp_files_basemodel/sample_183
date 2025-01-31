@@ -1,0 +1,23 @@
+
+# Write a python function to convert octal number to decimal number.
+
+
+
+        """
+
+    def getCommand(self, *args, **kwargs):
+        """Create the jth.cc preprocessor side"""
+
+class annotatedOptions(Options):
+    def __init__(self):
+        self.add_option('--nocheck', action='store_false', help='Try annotation in testing mode. You should set it directly in AnnotationBuild everything, except for the private ignore header')
+
+    def addArgs(self):
+        res = [ FieldAnnotation( 'nocheck', 'URLs will not be checked', 3, "_original_ANY.html", '-1', 3 ) for i in xrange(100) ]
+
+        return [ 'annotatorcache-from-vimple.db' ] + res
+
+    """ Annotation perform annotation build more than once.
+
+    The function must deal with URLs in the cache stuff is non-None, which gives threads to generate / annotation nodes, which then will make accurately
+    flask :ref:`with l10n.

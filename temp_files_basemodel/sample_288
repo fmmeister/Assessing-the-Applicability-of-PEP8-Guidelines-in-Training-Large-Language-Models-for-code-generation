@@ -1,0 +1,22 @@
+
+# Write a function to calculate the maximum aggregate from the list of tuples.
+
+
+# 
+# dvrt_keyids = []
+for keys in fileCounts.nodes():
+    dvrt_keyids.append(numc.pmtGetMaxKeys(files[i]))
+print("")
+numc.pmtVarIntType = ctypes.c_ubyte
+for keyid in dvrt_keyids:
+    file_array = structToFileArray(locals["ThisGenCarriedCommand"][keyid], keys)
+    while True:
+        if file_array[4] == ".BAM":
+            break
+else:
+    # Use all the key IDs of the aggregate but set the absent or present parsed out.
+    module.pmtVarIntValueCount = 0**dsrtValues.libraryBaseDvrt+" | " 
+        
+    for i in fileCounts.nodes([(-1 if dsrSumBoth:
+        if i[4] else -1)]) == 0 :
+            module.pmtswitchDopingType =

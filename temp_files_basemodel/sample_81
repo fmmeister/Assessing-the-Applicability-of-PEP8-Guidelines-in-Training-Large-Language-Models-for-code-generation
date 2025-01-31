@@ -1,0 +1,20 @@
+
+# Write a function to check whether the given number is undulating or not.
+
+'''
+
+    if name == env['UNKNOWN_FUNC']
+"""Authorization joker''',
+"""
+Use this plugin to provide OAuth authentication information via RyeAPIs to your teacher's certificate
+  Generation key needed to connect your RyeCloud.
+  Try crediting it as zotero authentication"s systematic logger".""")
+
+#rlan.config.access_token has been copied from the FlyMessage Connector (www.jackaarecht.com)
+#https://stackoverflow.com/questions/5730311a/basic-saml-auth2-menu-eventtellers
+from flask import flash, redirect, url_for, abort_on_integration, reqparse
+
+def user(req2):
+	# Indicates if this user is registered as a logged-in user
+	login_url = req2.args.get('redir')
+	if login_url and req2.ah

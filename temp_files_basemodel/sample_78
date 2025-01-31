@@ -1,0 +1,26 @@
+
+# Write a function to find the closest smaller number than n.
+
+ -----')
+
+
+def clear_cache(tab, overwrite = True):
+    pickle.dump(tab._data, pickle.HIGHEST_PROTOCOL)
+
+
+def get_mathods(subtype):
+        if cls._mathods == None:
+            return subtype
+        else:
+                m1 = command_obj.get_mathods_algorithm_details(subtype, "Build")
+                cls._mathods = self.create_mathod(m1)
+        return cls._mathods
+
+import pydot
+
+from portuguese.enabled.copy_resources import copy_resources
+
+class Server(pydot.Node):
+  '''A server object is created by the agent.  That command only created two
+  different schemas (but it can only happen to change them).  To use it, subclass a non spanning list
+  of GSOs.  Make sure you have your graphical {@link #Server.builder.Db

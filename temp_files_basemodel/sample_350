@@ -1,0 +1,21 @@
+
+# Write a function to remove empty lists from a given list of lists.
+
+
+def Subscribe(name, topicId, serverId):
+  #print "getName="+name+" topicId="+str(topicId)
+  #print "serverId="+str(serverId)
+  channel = tc_client.sys.subscribe(name=name, serverId=serverId, topic=topicId, channelId=0)
+  #print "Try not selfirrored"
+  if not is_tracker:
+    channel.acknowledge()
+    return
+  print "channels is None"
+  if verbose:
+    print "createSubscribedSubject does nothing. at: "+str(serverId)
+  if len(name)!=0:
+    #print "Create maintenance thread",name
+  while True:
+    #if not in_three_rows(d1, d2): continue
+    tc_client.sys.channel_remove_request(channel, name, serverId)
+    tc_client.sys.admin_subscribe(d1_test_

@@ -1,0 +1,15 @@
+
+# Write a function to calculate the sum of the positive integers of n+(n-2)+(n-4)... (until n-x =< 0).
+
+
+            self.comments[i].close()
+            eliminate = methyl_spanner_utilities.direct_extension_sanity_check_prep(s)
+            for i, c in enumerate(methyl_spanner_utilities.sources_by_line_rep_LASTLINES_elem[idep_num].children):
+                s.attrib['positions'] = V.Numbers(c)
+            closest = methyl_spanner_utilities.output_line_approxavg if inum == 0 else ''
+            test_list.attrib['annotation'] = [closest]
+            self.comments['function'] = [closest.format(method=errmsg) for errmsg in methyl_functions]
+            test_list.attrib['confidence'] = [255, 0]
+            self.comments['function'].end or test_list.parent.nodeValue
+            for el in test_list.children:
+                if el.tag not in JCML

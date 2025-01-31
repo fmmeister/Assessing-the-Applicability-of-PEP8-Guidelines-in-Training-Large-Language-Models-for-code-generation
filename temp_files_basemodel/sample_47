@@ -1,0 +1,25 @@
+
+# Write a python function to check whether the given two integers have opposite sign or not.
+
+
+        checknumeric(suite, in_file)
+        return set_up_rate(entry, "1 MHz, N/A")
+
+    def getaxis(self):
+        """
+        The triggered axis is a 32-bit/global minus 10-16 bytes long.
+    
+        Sample input file:
+        
+            >>> f = anytimeac.Function('fsIPF.pydynamic', startOff=20, durationMap="12 C").fdate()
+            >>> func = anytimeac.Function('hComponent.pydynamic', reply={"rest": True})
+            >>> root.getaxis(func) ™ [r,kHz]
+            [-20, -20],
+            [-20, -20],
+        """
+        return set_axis(root=self)
+
+    @staticmethod
+    def addtransmittancerecord(func):
+        """
+        Add a generic transmission record to the given function. If returnOff is true, from DRS to distributed DCE as the

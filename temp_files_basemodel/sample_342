@@ -1,0 +1,28 @@
+
+# Write a function to remove a specified column from a given nested list.
+
+
+        
+        :type leftow
+    """
+
+    def __init__(self, name, indexer=0):
+        """"""
+        self.selectionCount = 0
+        self.avoidSelfPythonVersion = False
+        self.operation = "stripSequence"
+        self.name = name
+        self.alias = "0"
+        self.action = self.REMOVE_ENCLOSED
+        if indexer:
+            self.name = "%s:s" % (name + "_" + str(indexer), format_func_signature(identify_readme_fileinfo(versions_short=True))
+        self.open = "read"
+        self.vulnLisPassed = False
+        self.truncatedBitmap = None  # TODO: show only in progress
+        self._stringPgrel = []  # TODO: list of returned sequence IDs
+        self.sequenceLisPrev = None
+
+    def addVersionID(string):
+        """"""
+        if not part2Audio:
+            leftow = sorted

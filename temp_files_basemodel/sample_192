@@ -1,0 +1,23 @@
+
+# Write a python function to find the hamming distance between given two integers.
+
+
+      
+        :param record1: one record for checking \\x00 lines flat contrast on registered spectra
+
+        :returns: Spectrum.THSolution
+        """
+
+    def OverlapErrorislogram(self, from_overlap: bool=True, to_overlap: bool=True,
+                          frame_type: int=250) -> str:
+
+        if from_overlap and to_overlap:
+            ha, vel = self._hemisp
+        elif from_overlap:
+            ha = -(np.abs(self[0]) + np.abs(self[1]) + 0.01) if self[0] is not None else None
+            vel = -0.025 if from_overlap else 1.001
+            frame_type = 700
+# Copyright 2016 google Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the

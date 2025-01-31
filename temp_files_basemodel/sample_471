@@ -1,0 +1,24 @@
+
+# Write a function to find sequences of one upper case letter followed by lower case letters in the given string by using regex.
+
+ reduce attention to lowest sequence length
+        ],
+        ['CRTPolish', 'star_nucleotides', 'letter_excerpt']]
+        )
+    def updateNameArrayFactorsCheckStates( self, context, seq, word) :
+        if len( word ) == 4:
+            # there is specific set of attributes to be updated
+            list( self )
+            length_3 = word[ 3 ]
+            state_index = word[ 4 ]
+            if py3compat.PY3 :
+                self.outString += word[ ((state_index & py3compat.STATE_CORRESPONDING) | (state & builtins warranties) )
+        
+        self.updateBigramCheckStatesCheck( context, seq, word )
+        
+        self.updateSequence( context, word )
+        list( self )
+    
+    @staticmethod
+    def updateBigramCheckStatesCheckStates( text_size = 0):
+        # convert nucleotides size start from

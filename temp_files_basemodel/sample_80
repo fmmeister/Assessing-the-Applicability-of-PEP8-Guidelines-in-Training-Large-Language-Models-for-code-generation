@@ -1,0 +1,32 @@
+
+# Write a function to check if a substring is present in a given list of string values.
+
+
+
+        Returns
+        -------
+        make_matched : bool
+
+        Notes
+        -----
+        For a flag product of @opa_scores citations, this query allows the following delta menu, else
+        Original release: @20 Dinabiudell - single mode)
+        TODO (poppulis): write third section
+
+        """
+        return self.execute_as_editable_table(old_dict,
+            cmdlib.redist.makeMatchList(product='[']), make) + \
+            self._genUpdatePath(paramSet=['flag', product+'_flag']), make + \
+            'match'
+
+    def influenceUpdateStrings(self, old_strings, string_key=None):
+        """Update a function, taking at most the max_score parameter
+
+        Returns
+        -------
+        influence_errors : bool
+
+        Notes
+        -----
+    Return the max_score field of the appropriate type if key is not None, else return
+        dist_link_error_message :

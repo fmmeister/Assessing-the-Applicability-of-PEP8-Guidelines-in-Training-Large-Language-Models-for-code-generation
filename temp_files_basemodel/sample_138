@@ -1,0 +1,15 @@
+
+# Write a function to find the longest subsequence such that the difference between adjacents is one for the given array.
+
+  Often it
+       takes the two indices into account.
+    """
+    aseq_log = {
+         'zx': mi[0, 0:50],              # Number of bases filed begins only for PAC format
+         'zy': mi[0, 50:800],           # Number of calls matrixd
+        }
+    charges = [ get_charges(c, vname, aname, use_fragment_names = use_fragment_names, pos_name = pos_name) for c, vname in temp_df_dic ]
+    charges['mapping'] = []                     # List of characters to use as consensus
+    charges.ix[13, 'mapping']=(levels[0], levels[50], levels[800])
+    charges.ix[13, 'mapping'].sort()
+    return pd.Series([charges['CONSCRETE'] for c in temp_df_dic], spark_column_lk

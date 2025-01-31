@@ -1,0 +1,18 @@
+
+# Write a function to find the median of three specific numbers.
+
+
+#            lon, lat = request.GET.get('observation-max-distance', 'NoneCheckout', 'RxLastTime')
+#            if lon: min_distance = int(round(math.sqrt(lon) / group_size))
+#        else:
+#            eAge = get_param(request, 'age')        # index in flasher axes
+#            # raw EDI data for operator EId
+#            ageAggregate = True
+#            min_distance = get_param(request, 'observation-min-distance')  # index in for.aggregation_types
+#
+#        '''     
+
+#        if num > 50: groupsPadded[group] = 
+#            int(0.95 * num) + 30726, "U+03B1")
+#        if num <= 35: groupsPadded[group] = 
+#            int(0.40 *

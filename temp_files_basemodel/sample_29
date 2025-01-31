@@ -1,0 +1,17 @@
+
+# Write a function to find frequency of the elements in a given list of lists using collections module.
+
+
+    distributed = True
+
+# Next three
+    NAXIS_inhibitor_Stream_b=((self._powerube.f_z0 + exp(-1.0j)),
+                           (self._powerube.f_x_z0 + cos(nsys * RCell_d(c))) for c in self._dudDural.values())
+
+  # -------------------------------------------------------------------------
+  def getPowerSpec(self):
+        rspeclist=[(c.xRe(r_booleans=False)) for c in self._dudDural.values()
+                    if c.xRe(r_sys=True).name=='iStream_b']
+        if rspeclist!=[(self._powerube.f_z0 + fps) for c, PF in ps.phasesSEvents.items()]
+                                         if self._powerube is not None else None)
+                             for fps, plevel in enumerate(ps.phases

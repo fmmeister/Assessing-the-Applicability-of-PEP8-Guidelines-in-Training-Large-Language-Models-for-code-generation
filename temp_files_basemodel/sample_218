@@ -1,0 +1,24 @@
+
+# Write a function to re-arrange the elements of the given array so that all negative elements appear before positive ones.
+
+
+#            assert d_array.shape == (4, )
+#        # build the new array line out of the given regions
+#        area = sy.hilbert(n_quadrant_points=4)
+# So the dep last junction point is one.
+#        bets = False
+#        # project organism fields into the data space.
+
+#    .. cluster::
+            #        4 cluster fields of n_clusters: n_vertices = area.PerVertex
+            d_array = np.zeros((4, 4))
+
+#        I = np.identity(4)
+#        area.project(d_array)
+
+#            for j in range(d_array.shape[0]):
+
+#                for i in range(d_array[0][j]):
+
+#                        for e in E3MStreamIterEnums:
+            assertMatchColors(e.channel

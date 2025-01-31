@@ -1,0 +1,23 @@
+
+# Write a function to replace the last element of the list with another list.
+
+
+
+class Credentials(object):
+    AUDIT_CHANGED_PREFIX = _("<Create User Database for Admin ID: %d")
+
+    def __init__(self):
+        """Prepare each entry in file.""" % DUMMY_USER_ID
+        self.users = cgi.escape(data_dict['issued_shares'].encode('utf-8'))['users'] + badprovider
+        self.projects = self.users['child_projects']
+        self.name_space = ' (Shared)'
+
+    def get_item(self, issue_id):
+        """Return the saves a User Share item for each share type."""
+        storage = ObjectStore()
+        items = storage.find_row_by_row_id(issue_id)
+        noprocess = (items != None)
+        if noprocess:
+            items = sorted(self.users)[-1]
+            self.users['_partner'] = items                                
+            ischild, message,

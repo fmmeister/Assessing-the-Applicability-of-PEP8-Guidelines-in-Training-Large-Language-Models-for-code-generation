@@ -1,0 +1,24 @@
+
+# Write a python function to check whether the given number is co-prime or not.
+
+
+    
+    Inputs:
+        S = linspace(li, bStart.shape[0], adr, adr)
+        MD = 9999999 * (li)
+
+    Outputs:
+        A rcVar and created EXT jump.
+        
+    The class Foo(object):
+        """ Implementation of Trial and namedtuple interface
+        """
+        def __init__(self, qsi='-np', qss='-np', retQsaStage="stable", tarStage='gz', extArchive="0.1", runPreCmd = root_dir + "/EXT", baseDir = -1) :
+                    self.qsi = qsi
+                    self.qss = qss
+                    self.retQsaStage = retPriority.get('qss', '.') + retQsaStage
+                                        
+            self.stage = S
+        return {
+            S : ext_dir_0,
+            bStart : self._constructTarFromFile(fn, SOUND_PICKLE_BASEFILE + S

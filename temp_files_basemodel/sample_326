@@ -1,0 +1,24 @@
+
+# Write a function that matches a word at the end of a string, with optional punctuation.
+
+
+    "decoration",
+    ['formula',
+      'formulaName',
+      'elemwiseClasses',
+      'classes','foo'],
+      "specialMargins = losses - string")
+
+def parse_anatastcgup(ccgxsession, stackchart):
+    '''
+    rightEdgeException: Used to hold as dst identifier for right edges.
+    relocGlobalLabel: Unexpected token -> text (string)
+    falseEdgeLabel: Equal \and text, but unused
+      Build:  u'tasknames = "%s"'  % (ccgxsession.document.NUMBER_SUFFIXES, 
+                                      ccgxsession.document.SENTENCE_SEQUENCE)
+    coords = list(cigxsession.ZipOffset() for x in CCG_XPATH[calendar.name]))
+    return coords
+
+# TODO(weijain): Get method documentation reverse, so we can get different argtypes:
+# des, systime, systimeName
+# anat

@@ -1,0 +1,26 @@
+
+# Write a function to check whether it follows the sequence given in the patterns array.
+
+
+
+    :param coeff: Function header object
+    :type coeff: str
+
+    :returns: Native obsmax before and after mean fit.
+    :rtype: float, float
+
+    """
+
+    # Bi-process criteria
+    lower_pass = 200.
+
+    def _logarithmetical(n):
+        """Plots a plot graph including the plot previews."""
+        fig = plt.gcf()
+        ax = fig.gca(projection='3d')
+
+        stemfit, pepdiwfileplot = plot_recurrence(langview, n.num_repos(),lower_pass)
+        mu,support = sigpath_dicts[langview]['item_range_min'],spec_dicts[langview]['item_range_min']
+        # plot the 650s x 350s for displaying AWS responsability
+        if 0<n.start_assert == 0:
+            print u"-----------> %-16s %16s---------" % (u'é

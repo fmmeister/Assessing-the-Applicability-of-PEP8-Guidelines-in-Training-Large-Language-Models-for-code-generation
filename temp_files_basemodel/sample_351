@@ -1,0 +1,23 @@
+
+# Write a python function to find the item with maximum occurrences in a given list.
+
+ If maximum automation
+        duration is positive.
+        :rtype: WeaponItem
+        """
+
+        self.max_assets, self.min_assets = max_assets, min_assets
+
+        for indx in call.category_info:
+            self._spell_in_life(call, out)
+
+        # GC efficiency 注意数据权限石是中心罗"""的尺寸保留 blog命名誌证金九制多单石。
+        out.OclFactory.visitovEvent(call)
+        event = WeaponItem()
+        event._column = None # 获取ColumnIndex中的名字
+        event._is_chapter = False
+
+        self.out_squares.append('item') # 获取 datum分类的源样式
+
+        if len(self.max_sources) == 0:
+            last

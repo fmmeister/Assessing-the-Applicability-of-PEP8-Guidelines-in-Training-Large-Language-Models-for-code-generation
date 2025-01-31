@@ -1,0 +1,16 @@
+
+# Write a function to find the surface area of a cone.
+
+
+        t = np.array(self.FlowDesc.surface_gross)
+        for depth, yalias in enumerate(surface_alias_names):
+            self.No.surface = t[depth] + '/' + yalias
+            for year, y, s in zip(self.no_num_samples+1, targets, age_map):
+                assert (date(yalias, 2, 1) < self.No.to_cur_date) and (s > t[depth]) and (xalias in s[[1], 2]].map(alias_test_only)).all()
+                if yalias == 'A' or np.isnan(y):
+                    VourTot.Mid.volume = self._to_float(s[np.isnan])
+
+
+for m, verr_pays in [
+    (b'string_to_number_names', False),
+    (u'voléliaire_code',

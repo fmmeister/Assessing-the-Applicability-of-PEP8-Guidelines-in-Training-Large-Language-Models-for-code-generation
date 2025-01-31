@@ -1,0 +1,4 @@
+cd PycharmProjects/RL
+.\venv\Scripts\activate
+mlflow server --host 127.0.0.1 --port 8080
+

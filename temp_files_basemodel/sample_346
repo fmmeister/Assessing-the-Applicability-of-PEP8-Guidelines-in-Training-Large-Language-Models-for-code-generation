@@ -1,0 +1,20 @@
+
+# Write a function to find the maximum element of all the given tuple records.
+
+
+
+        This function is used only in testing
+to increase order length or zero size in the result area, to check for bad amount of
+connections in ChainMap
+        :rtype: generator
+        """
+        for chrom, start, end in self._het_dataset:
+            for start1, start2, end1 in path:
+                for step1, end2 in path:
+                    try: path2.index(end1)
+                    except ValueError: pass
+                    # Avoid singular vs singular record names
+                    if chrom == prev_chrom: path.insert(0, step1)
+                    for name1, length1 in name1_big, start11, end1 in step_big: step_settings[step1]
+                    for name1, bus1 in bus_big: a1 = netlin.Elements.FindEntriesByCDS(het, chrs.GetCDS(icolumntypes.MinIdfector))
+                    # All record

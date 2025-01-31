@@ -1,0 +1,26 @@
+
+# Write a function to calculate distance between two points using latitude and longitude.
+
+
+        fexecute(s, "latitude=:{0}").format(local)
+        fexecute(vs['HEADER']['TIME_RANGE'].format(tablename))
+        s = self.query(s)
+
+        # checksum has to be appended if the original (lon, lat) coord."""
+        #     _name = "pm2.ceiling_point"
+        if self.const.check_marker_collection(pcoll) and not var.has_key(1):
+            s.append(paranoid)
+        elif var.has_key(1):
+            s.append(matches[len(matches)/4:len(matches)/4 + 6]
+        else:
+            # should pass this as a marker collection
+            raise RuntimeError("Each pixel must supply a time range ID strings")
+
+    # -------------------------------------------------------------------------
+    def get_height(self, "time_range"):
+        """ """
+        return self.markerxy[0]
+
+
+    # -------------------------------------------------------------------------
+    def get_latitude

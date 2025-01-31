@@ -1,0 +1,17 @@
+
+# Write a function to remove tuple elements that occur more than once and replace the duplicates with some custom value.
+
+ "
+                   "This file was created if the xml-line command was called batch file.")
+    # print("Removing points (fills it up): ", str(self.projLayer))
+    lineLayerId = lineLayer.quotedCharField(previousLine=line.tableId(), maxlength=1, index=self.geomForward.index, validate = False)
+    lineLayerId = models.CharField(default="REGION (Default)", max_length=32)
+    osm_port = models.CharField(help_string="Port to connect to True.",
+    max_length=3306,
+    default='',
+    widget=models.PointSelect.RADIOBUTTONS['up-speech'])
+    # print("Making Region ends up: ", lineLayerId)
+    self.conflictIdsMatrix = numpy.matrix([
+        {'S': 'one', 'D': 'two'},
+        {'T': 'both', 'Y': 'text-input1'},
+    ])

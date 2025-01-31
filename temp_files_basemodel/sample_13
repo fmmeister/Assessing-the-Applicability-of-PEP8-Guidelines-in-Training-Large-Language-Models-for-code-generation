@@ -1,0 +1,23 @@
+
+# Write a function to convert the given binary number to its decimal equivalent.
+
+
+        - sin=acos('2.0 * pmag * MNOTEXIST')               # Or return ERR WHAT M2O would be?
+        
+
+    """
+    names = nothing            # boolean about MCNX geometries
+    for si, obj in cases.items():
+        if isinstance(obj, str):    # export arrays to orig GeoJSON.
+            names = True
+            OSGTools.statusBar(4,"Name: "+obj.strip().strip(' \; \ backslashes, @')+'", Done")
+        else:                        # handle UTF-8 geometry.
+            if names:
+                obj = obj.encode('utf-8')
+            if obj.endswith(":"):
+                parts.append(int(float(obj[:-1])))
+            elif len(re.search('(^root_left|(?:\.+|Distance), ',name))
+                if parts:
+                    new_relation.deleteConjunction('/'+','.join(parts))
+            else:
+                # Invalid name.

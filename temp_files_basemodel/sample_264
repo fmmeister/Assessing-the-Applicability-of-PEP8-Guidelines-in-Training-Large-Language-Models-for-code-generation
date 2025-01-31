@@ -1,0 +1,23 @@
+
+# Write a python function to find the position of the last removed element from the given array.
+
+
+    """
+
+    tagXmlTags['selection'] = mutagen.id3.RadioTable(str(audio3popu.sref), 'delicious.org')
+    n = tagXmlTags['title'].playcount
+    residues = str(audio3pop)
+
+    topTag = mutagen.id3.SimpleTag()
+    atom = mutagen.id3.SimpleTag()
+    tag.append(titlelib.URI2String(recognserID))
+    topTag.append(tag)
+    '''
+    for r in residues.split(','):
+        atom.append(str(round(int(r, 0)))
+    '''
+
+    return  ''.join(atom) + '''
+<table id="items" align="center" data-class="big-album"/>
+<col minsize="0" valign="bottom" border="0" align="center">      <col id="likedTicks"/>
+<col maxsize="0"*

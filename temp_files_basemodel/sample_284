@@ -1,0 +1,21 @@
+
+# Write a function to return the sum of all divisors of a number.
+
+
+        # If I somehow have a good name for passing lhs.
+        context['all_dividends'] = implementer_data['count']
+        return self.klass.get_datetime_periods(context)
+
+
+def get_iterator(container, context, cur_date_list=[1, 2, 3]):
+        """
+        :param float container: PeriodArray for analysis which will be converted to DataFrame.
+                                Cached vector data.
+        :param list cur_date_list: Path [4-space] for the date to which the slicing, tags both in input size.
+                                    self.date_range() will be called with the sequential date
+                                    nor the image data.
+        :return next(container) arrays self.date_range(), these events will be addressed.
+                false if reset data is mismatched date
+        """
+        dict_range = get_metrics_function('content.VBoxGrowingIterator')
+        self.date_

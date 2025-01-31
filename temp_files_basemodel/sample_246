@@ -1,0 +1,17 @@
+
+# Write a function to swap two numbers.
+
+js files (like courseware.views.index is xblock.internal.sequential.StandbyDate.__init__.content), passing "holes" into the new
+# library. We update txvendor.views.generate_cg_header to match 'rhin-{course_id}libwrap.js'.
+
+''' # pylint: disable=line-too-long encoding-errors
+a = doc.find("restoreActionRequest .history-view .backups .delete  .delete cdnQueue NoOp") > 0 # pylint: disable=line-too-long
+    sellList = find_item_by_poster_prefix(doc, "alarmSlot1_sequenceCode_prev");
+''',
+        code="""
+            function restoreAction(reverseUploadBoxInHole) {}
+                                   {} (){}
+            """,
+        name=library.generate_dir,
+        emit_info = {
+            'structureUrl': TransanaAPI.structure_url(self.API_modif

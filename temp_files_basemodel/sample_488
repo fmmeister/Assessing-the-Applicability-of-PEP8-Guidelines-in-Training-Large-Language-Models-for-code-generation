@@ -1,0 +1,30 @@
+
+# Write a function to find the diameter of a circle.
+
+
+
+   Adds:
+       geo.Delaunay(list(directionTrack)),
+    """
+    
+    dimensions = [length, csize]
+    OK = False
+    b = False
+    
+    if directionTrack != None:
+        da = directionTrack.da
+        dimensions.append(length)
+        da = gdal.GetDriverByName(module)
+        position = da.GetPosition(position.typeDetector())
+
+    for r in range(maxDistance):
+        if rasterA != 'ANY':
+            planesPerPixel = 50 # Limit struture down range to need of pixels for deletion of sourceWriteEngineXml
+
+        if not OK:
+            ok = True # Don't do anything with OK args, wait the console module to finish
+        deleteRasterFieldSurface(rasterA, sType, recordCount + magnitudeTrackTypesLayerclass.count, projection, r)
+    
+    startPixel = startPointXml
+    packetLength = recordCount
+    return (float(packetLength.replace('LXY', '')

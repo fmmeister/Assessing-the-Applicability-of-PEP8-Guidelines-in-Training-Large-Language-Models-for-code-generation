@@ -1,0 +1,21 @@
+
+# Write a python function to count number of non-empty substrings of a given string.
+
+
+        if instring[-1] not in self.stmtStack:
+            if keepAssignmentTables: # Parse the next line
+                loc = self.JanKana.tokenPos
+            else:
+                loc = lineno
+        self.tok_abc.expectKeyboardInterrupt = allowPropagate
+    hmacKeyFClain = staticmethod(binascii.unhexlify)
+    hmac_v5Sum = classmethod(binascii.hexlify)
+    cleanName2TooLong2 = staticmethod(lambda name : garbageDelete(name))
+
+    #try:
+    #          scoreBitVal = cleanName2(instring)
+    #             #STEM             =++++++++++++ LSTR Tested
+    #             #PARAMETRICS
+    #             #b'string2_match.12',         coefficient=True)
+    #             scoringContext = {'s': [b'SA%d'%(i), b'TV%d'%(i) for i in scoringSet], 'c': [b'TV%d']})
+    #             self.

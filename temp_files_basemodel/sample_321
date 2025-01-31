@@ -1,0 +1,21 @@
+
+# Write a function to count character frequency of a given string.
+
+ 
+#
+#[[0:/%d]] = [0: '%s', 1: '%s', 2: '%s', 3: '%s']]
+	
+latticip = re.compile(r'(\d+\.\d+\.\d+)[-+]', re.I)
+longtripid = re.compile(r'(\d+\.\d+\.\d+)[-+]', re.I)
+thirtyear = re.compile(r'(\d+\.\d+\.\d+) minutes?', re.I)
+
+#For Virginia important things are silly and are good enough , we use its sole transecting api populated date onward, not the
+    #w-way dyane at the end
+ddspace=""
+	
+curtime    = 0
+#list-of-lists-of-lists 
+curtime   = [[]]
+list_of-lists_of_abbrs = [[]]]
+	
+minuteTiers =  

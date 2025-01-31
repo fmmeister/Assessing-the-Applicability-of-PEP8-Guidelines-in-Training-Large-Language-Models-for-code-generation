@@ -1,0 +1,24 @@
+
+# Write a function to find the vertex of a parabola.
+
+
+
+    @type args: list
+    @ivar args: Particle data file name arguments
+    @type atom_args: list
+
+    @type _subsampling_range: tuple
+    @ivar _subsampling_range: Vector field index of a face. Each face index starts with which to scale one
+        rectangle in a line in the opposite direction.
+    @type subsampling_range: tuple
+    """
+    def __init__(self, args):
+        """
+        Parse file arg as RGB triple (black, red, green, blue) on this object.
+        :param ivyGPS: time point to generate the faces
+        """
+        super(textDevice, self).__init__(HWadzoneText(line_num=3), text = sh % (tfnprefix)
+        self.ignore_files = CAL_Gpc.NAME
+        self.abk_area = 255
+        self._geom = gps_geometry(args)
+        self.current_dir(args

@@ -1,0 +1,21 @@
+
+# Write a function to remove the duplicates from the given tuple.
+
+
+
+  stdout, log = self.RunProtector(original_event_type, self._file_watching_log_batch)
+
+  self.assertEquals(
+      message,
+      assert_util_pb2.WELCOME_ICANV_EMAIL_CONTENT_DELIM % {
+          'nick': message,
+          'body_html': format_html(u'%d %B %Y'),
+          'body': 1,
+          'log_id': 0
+          })
+
+  for produced_message, assert_order in self._file_watching_log_batch:
+        assert_order in (assert_order.is_mandatory, assert_order.multiple)
+        assert_order.start_ordered == expected_order.start_order != produced_message.order
+        self.assertEquals( produced_message.original_object_id,
+            'org/pantsbuild/testproject/dir:%s' % produced_message.directory.path

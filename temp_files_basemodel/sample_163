@@ -1,0 +1,19 @@
+
+# Write a function to group a sequence of key-value pairs into a dictionary of lists.
+
+ Either the URL will be used or all of the but useless variables in the urlconf or in the user-cache path must be known (in debug mode, requests are only gluon supported)
+def bootstrap_sample(text, mode):
+    sample = dict([(k, walk(k)) for k in re.split('[*;,\.\.,]', text)]) #search for bits
+    media_host = None #host where a new media should be created
+    if media_host == "":
+        media_host = _get_media_host(text) #multiple dashlists
+
+    if mode == "sample":
+        if sample.has_key("(None)") == False :
+            print string.join("", ["*"])
+        else:            
+            print text, sample["[(None")]"]
+
+from PyQt4.QtCore import QSettings
+from PyQt4.QtGui import QDialog, QFont, QFontDatabase, QFontDatabaseWidgetItem
+from PyQt4. QtGui.QFont

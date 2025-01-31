@@ -1,12 +1,9 @@
 import json
-import os
 import os.path
 import time
+import mlflow
 from argparse import ArgumentParser, Namespace
-from time import gmtime, strftime
 
-# from trash_trainer import GANTrainer
-from eval import compilable, pep08
 from trainer import GANTrainer
 
 
@@ -29,16 +26,8 @@ def parse_args() -> Namespace:
                         help="evaluate the model")
     parser.add_argument('--adversarial', default=1, type=int,
                         help="whether to perform adversarial training")
-
-    # Pretraining:
-    parser.add_argument('--pretrain', default=0, type=int,
-                        help="whether to pretrain the generator")
-    parser.add_argument('--num_pretrain_epochs', default=40, type=int,
-                        help="number of epochs for generator pretraining")
-    parser.add_argument('--pretrain_lr', default=2e-5, type=float,
-                        help="pretraining learning rate")
-    parser.add_argument('--weight_decay', default=0.01, type=float,
-                        help="pretraining weight decay")
+    parser.add_argument('--disc_weight', default=1, type=int,
+                        help="weight between disc and obj")
     # Generator:
     parser.add_argument('--gen_dir', default="./save/huggan/gen/", type=str,
                         help="directory from which to load and to which to save the trained generator model")
@@ -67,7 +56,7 @@ def parse_args() -> Namespace:
     parser.add_argument('--num_samples', default=32, type=int,
                         help="number of generated samples to include for each epoch of discriminator training")
     parser.add_argument('--clip_norm', default=5.0, type=float,
-                        help="number of epochs for generator pretraining")
+                        help="used in discriminator optimization")
 
     args = parser.parse_args()
     args.num_filters = json.loads(f"[{args.num_filters}]")
@@ -80,8 +69,6 @@ if __name__ == "__main__":
 
     args = parse_args()
 
-    print("Filters:", args.num_filters, args.filter_sizes)
-
     if not os.path.exists(args.gen_dir):
         print(" > makedirs", args.gen_dir)
         os.makedirs(args.gen_dir, exist_ok=True)
@@ -89,17 +76,16 @@ if __name__ == "__main__":
         print(" > makedirs", args.disc_dir)
         os.makedirs(args.disc_dir, exist_ok=True)
 
-    trainer = GANTrainer(args)
+    mlflow.set_experiment("RL")
+    with mlflow.start_run(run_name="disc_weight=1"):
+        trainer = GANTrainer(args)
 
-    # if args.pretrain:
-    #     trainer.gen_pretrain()
+        if args.adversarial:
+            start_time = time.time()
+            trainer.adversarial_train()
+            end_time = time.time()
+            elapsed_time = (end_time - start_time) / 3600
+            print(f"Computing time adversarial training: {elapsed_time:.2f} hours")
 
-    if args.adversarial:
-        start_time = time.time()
-        trainer.adversarial_train()
-        end_time = time.time()
-        elapsed_time = (end_time - start_time) / 3600
-        print(f"Ausführungszeit adversarial training: {elapsed_time:.2f} Stunden")
-
-    if args.eval:
-        trainer.eval(9999, [])
+        if args.eval:
+            trainer.eval(9999, [])

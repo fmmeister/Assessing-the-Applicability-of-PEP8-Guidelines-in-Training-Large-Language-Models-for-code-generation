@@ -1,0 +1,18 @@
+
+# Write a function to remove lowercase substrings from a given string.
+
+
+        def remove_substring(self, value):
+            return value.replace('_', '\_'), 1).lower()
+        called_functions.append((remove_substring, remove_substring))
+    else:
+        tag = remove_substring('tempita:tag')
+        called_functions.append((tag, value not in self.__grammar, 0))
+
+  def generate_pkgname(self, contains):
+    tag = remove_substring('tempita:package', contains)
+    pkgname = self.__kallof_tempita_package_length(pushType='MINUS')
+    if againMemory(self.__tmp_dir + '/kanf').is_File:
+    # Some of --cached updates with @kalinea instead of @profanity may have a slower data structure than --knowledge-base. To be intended) compute this message, run me as update patch name
+        os.system('update-cached')
+        subprocess.call

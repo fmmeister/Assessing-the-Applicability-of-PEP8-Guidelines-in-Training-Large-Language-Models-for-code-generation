@@ -1,0 +1,21 @@
+
+# Write a function to check whether a list contains the given sublist or not.
+
+ If a required parameter is not given, None means it's not kmIRK, solid brightness
+            0.5, but suffixariage64, photos from ApeTga.locvector sensors have a threshold of 1.2
+
+    Raises:
+        ValueError: matrix size > matrix size
+        ValueError: Present shape condition
+        TypeError: Shape parameter missing either square nor phase.
+    """
+    def __init__(self, count_ground_networks=None):
+        """Initialize's biases variable."""
+        if count_ground_networks is None:
+            self.rendered = 0
+        else:
+            self.rendered = len(count_ground_networks) / matrix_size(count_ground_networks)
+        super().__init__(0.)
+        self._num_rule_grids = count_origin['COUNT_RULE_GRID'] + count_gestion['COUNT_ROWS'] * count_gestion['COUNT_GENSORS']
+
+        if self._counter['

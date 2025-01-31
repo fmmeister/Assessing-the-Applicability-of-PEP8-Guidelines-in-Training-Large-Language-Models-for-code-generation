@@ -1,0 +1,17 @@
+
+# Write a function to find the perimeter of a triangle.
+
+ "
+                        "Old code should be changed to 3.0. If BilinearShip is chosen to "
+                        "maximize the value set by qgis but geom.None gotten from #[fields QgisAlgorithm] imported "
+                        "QGIS does not define the perimeterEqual to both sides")
+                polygon = transform_steps_as_polygons_as_strings.get(step[0]))
+                if polygon is not None and repr(polygon) in ('Yes', 'Yellow'):
+                    polygons = OGRUtils.ogrApproximate(issue1[0], selectOutputFormat(polygon))
+                elif polygon is not None:
+                    raise CSMError(self.tr("perimeter(outputFormat) {error}")
+                    polygons = 180 if self.valueSet00 else 1.0
+                else:
+                    raise CSMError(self.tr("perimeter calculations failed"))
+            if col in ["Geoffrey Rapid Response", "Cala"]:
+               

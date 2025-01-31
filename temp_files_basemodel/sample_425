@@ -1,0 +1,21 @@
+
+# Write a python function to print negative numbers in a list.
+
+
+
+        k parameter size must be aligned with the instruction size
+        s optional block, otherwise scalar
+    value : int
+        The selected function will accept a specified zero byte value or local name
+    ftype : int
+        The called function will use the function type based on int address
+    block: int
+        <=> (see code in ParseLVC macros), z flag must be only valid after non vimeo Z offsets.
+        See strict_mos_extentming.RealRangeRegistrar for the required change of authentication status <= 8-byte.
+    connection : SimObject or None, optional
+        The real end to use for connection control, submodule register, and zero byte value to block when each other operand except rdio and fds are stored. -
+        if destructor is None:
+            polymorphicType = 'libbool'
+        elif excludeLinkerHV and connection_info['fds'].moduleName in [dd, dd.deviceID]:
+            polymorphicType = "libint64"
+        else

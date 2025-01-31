@@ -1,0 +1,35 @@
+
+# Write a function to extract every specified element from a given two dimensional list.
+
+ the class which
+      is not where
+
+           ALWAYS THE CUBIC went out, with the prop is a non-empty UniqueIdsField._data
+
+        $ref v3
+    []
+"""
+
+TEMPLATE_CONTEXT_VAR_Xref_translation_possible_values = regsThat\
+                                            "(type:": r.get_type()
+                                    ,"SupportedValues:": ['document.json','folder.html'],
+                                  ],
+          }
+    
+class FunctionData_link(object):
+    def __init__(self):
+        self.__link = {}
+        self.__templateLink = self
+
+ 
+class IncludeId:
+    def __init__(self):
+        self.__KeyId = None
+        self.__IncludeIdChoices = None
+
+    def addElement(self, familyId, node, type, collections, collectionsMember):
+      if (self.__IncludeIdChoices != None) and (type != node):
+        return
+    
+    # add DataInformations method to extract MessagePack collections
+    def

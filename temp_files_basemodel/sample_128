@@ -1,0 +1,19 @@
+
+# Write a function to find the circumference of a circle.
+
+  -- slow for efficiency.
+
+    Parameters
+    ----------
+    solver : {'relu', 'default'}
+      RGB circle solver to use. 'relu' solver format, 'default' solver is run ahead.
+    hyp_grad : boolean
+
+doc: https://arxiv.org/abs/1606.5663841,10.0842/1606.564234
+    """
+    params = _convolve_functions['residual'](failure_vector, num_times, name=mha_name, time_range=(t_min, t_max),tau=tau_range,grad=hyp_grad)
+    if mha_name() == 'engraving gradient':
+        mu,sigma=setPandaRepeatWithMoreTau(failure_vector)
+        params['mu'] = setMu(parameters[1],tau)
+    if isinstance(params['parameter'], list):
+        assert t_range==Param.defaultHi, 'Provide the hour and

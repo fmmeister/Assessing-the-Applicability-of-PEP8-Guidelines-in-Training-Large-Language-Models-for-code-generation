@@ -1,0 +1,20 @@
+
+# Write a python function to find the first repeated character in a given string.
+
+
+            string = old_line
+            old_len = readlinelen(old_file)
+            
+        line = specialsection.split()
+        while line[-1].search(word) is not None or string[-1] != string:
+            line.pop ()
+        if int(line[-1]).start_index < etype_probably_num_splitline:
+            word = self.char_split_error(line_num_split="function split()")
+        if string != old_choice:
+            dialog_tag = ["Option group fields", getconfig('acceptance_moderate')] + " ({0})".format(getconfig(text_list)
+                        for text_probably_num, rtype in int_type_group_fields]
+        
+        
+        string = special_fields.split()
+        if ((etype >= 'NORMAL' and etype != proc.SIGTERM) or (etype >= 'NORMAL' and etype != self.SIGSTOP)
+            or (

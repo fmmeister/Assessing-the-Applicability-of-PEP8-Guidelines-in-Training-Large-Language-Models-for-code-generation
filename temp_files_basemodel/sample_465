@@ -1,0 +1,29 @@
+
+# Write a python function to find the sum of the largest and smallest value in a given array.
+
+
+
+        # Set defaults of governing variables:
+        assert isscalar(
+                anomalies[i], 'Anomalies[%i]: expected value = %s but found %s'%(
+                i, anomalies[i], isscalar(self.beta)
+                )
+        except (TypeError, KeyError), error:
+            msg = error.args[0]
+            self.fail(msg)
+
+        funny_stratum = []
+
+        for anomiers in anomalies:
+            res = _flatten_list(anomiers)
+            rm = len(res) - 1
+            if rm == 0:
+                funny_stratum.append(res[-1])
+            dest_sum = _flatten_list(funny_stratum)
+
+            assert rm in self.nodes
+                break
+            dest_sum += dest_sum[rm]
+            beta = dest_sum += self.betas[i]
+
+            res[-1gradient

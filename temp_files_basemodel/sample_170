@@ -1,0 +1,18 @@
+
+# Write a function to find the longest common prefix in the given set of strings.
+
+  Useful when generation a tree.
+        given_out = apply(osgeo.point_cloud_distance, args[0])
+        g1, = orig_gene_outputs(name='G1', grps='GENIATOR')
+        g2, = old_relation_outputs(name='RELATION')
+        g3, = vcfutils.string_to_int(16383)
+        if g1 is None:
+            expected = -1
+        else:
+            expected = max([len(cmd_output["synonyms"][i]) for i in g1])
+        for cmdp in apply_db_parameter("alternate UNIX", cmd_st),
+            reverseSynonyms
+    else:
+        31                          # tree weight based on freq
+        clust_uid = combinedResult.getUniqueString('cmd_id')
+        g1, g2, = vcfutils.string_to_int(200), cmd_output.getUnique

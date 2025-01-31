@@ -1,0 +1,18 @@
+
+# Write a python function to find the missing number in a sorted array.
+
+
+   #  return 1
+	elif ducktape == 'part':				# Front Application Types / Module Types that are listed in meta modules
+	    if node.annotation != None and val != self.annotationJsonObj[n].annotationJson:
+		resultFile = metaModule.loadFeatureCollection(sectId, json.loadJson(stagId))
+		for n,j in resultFile.items():
+			sect = self.__name2Fuscription__(j['name'])
+	    self.pickle(node.json, pickle) # Conversion of json.dumps(self.jsonObj[n], 'w')
+	    return 1
+        return 0
+    def displScanned(toFuscription, moduleList):
+	    pass
+	modulesFile = {"imptplanned_type_ids":[],[]:toFuscription}
+		for ttypeId,j in moduleList:
+	    modulesFile[tname][ftypeId].append

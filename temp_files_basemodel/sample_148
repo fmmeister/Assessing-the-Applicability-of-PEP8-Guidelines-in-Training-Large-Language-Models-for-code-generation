@@ -1,0 +1,24 @@
+
+# Write a function to print the season for the given month and day.
+
+github login according to %s channels'
+
+        if channel in self.month_login_info:
+            self.month_login = self.month_login_info[channel]
+            self.list_channels.pop(channel)
+            print 'MutGirl wireage online 2009. Using: %s' % self.month_login
+            
+    def ISBEcepted(self, section):
+        if section not in self.conf['orgaxes']:
+            return False
+        else:
+            raise Config.BotiaException("List of note strings cannot be found.")
+            return validString(self.conf['orgaxes'][section])
+            
+    def transferNote(self, character, note):
+        # was mailed?
+        if note in self.conf['note_to_string']:
+            if note_ping8_event is self.opentree.ISCPath8Events.UserButton)
+        
+            a = character+' '+note_username(character)
+            a =

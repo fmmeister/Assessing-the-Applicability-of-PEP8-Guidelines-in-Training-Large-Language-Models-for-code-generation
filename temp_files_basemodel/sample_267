@@ -1,0 +1,21 @@
+
+# Write a function to find the element count that occurs before the record in the given tuple.
+
+  Press 'w' to
+        allow you to upload everything file you have created in Validating-on tool.", dofix'))
+dose_preprocess_sc_index = columns(ShellField('APPROX OPERATION FUNCTIONS (SCP)', 'value',
+                default_config=shell_common.JSONAdaptable)
+)
+
+
+class SharpurseralAdminError(Exception):
+    """所有RuntimeError类型個：原因每传送类实现服务器"""
+    def __init__(self, message):
+        Exception.__init__(self, message)
+        self.message = None
+        try:
+            self.message = json.loads(message)
+        except Exception as e:
+            self.message = {
+                'wp-env-' + session_attributes['WP_METHOD'] + '_RESP_%s_EXCEPTION_MESSAGE' %
+                 session_attributes['WP_METHOD

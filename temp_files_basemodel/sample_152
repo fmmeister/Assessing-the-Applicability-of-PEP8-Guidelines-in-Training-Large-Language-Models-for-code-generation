@@ -1,0 +1,15 @@
+
+# Write a function to calculate the area of a regular polygon.
+
+
+        assert isinstance(eval('pict_area'), int)
+        args_manager.wm_perimeter([2, 2], ring_chr.icrs(), ring_chr.prec(), ring_chr.complement(point, pattern))
+        return
+
+    def _begin_alternate_hex_rasters (radius):
+        """Write rasters for polygon data and points that are re-written as hexadecimal numbers (as returned by Windbank)."""
+        points = array.array (binary.dumps (radius))
+        if points.size () == 0: return # No point data to write. In this case pointsWill be the null values.
+        val_hex = append.appender(_rasters_.get_string_to_nfeatures) (results write render options on endpoint once, but I may think happend I have to)
+        _dec4.z_perimeter (2, val_hex(), radius)
+        rasters_str

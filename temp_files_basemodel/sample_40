@@ -1,0 +1,18 @@
+
+# Write a function to print check if the triangle is equilateral or not.
+
+ A209D must be a parameter.\n'
+                    'Files attachements for the 1 more stuff found:\n')
+                files.write(e.text)
+            return '${points}/({%s}})\n}var.%Xs = %7.8f,' % (
+                self.parameters[level]['xscale'],
+                self.parameters[level]['var'][T.shape_padded((interior_arr / float(level + 1)), order='F')
+
+
+class TestMat3D(TestFix):
+    def _testMakeTProfile(self, T, (f, b, a))[0]
+        for level in level_list:
+            self._testDosetMav(T, level, protected=False)
+        return TF_MatrixProfiler(T, protected=True, TF_Identity((F.shape[0],len(ants))))
+
+# Licensed to the Apache Software Foundation (ASF) under one

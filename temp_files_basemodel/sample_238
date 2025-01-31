@@ -1,0 +1,25 @@
+
+# Write a function to find the intersection of two arrays using lambda function.
+
+
+        """
+        self.assertFalse(self.a.nocontracts)
+        self.a = other(**second_func.updates)
+
+        # ----
+        """
+        if use_ldA is False:
+            self.expected_left = left
+            self.expected_right = right
+        """
+        else:
+            (left, lnum) = testvideo.order(kwargs={'ld': 'true'})
+            (left_metadata, right_metadata) = second_func.find_merged_metadata()
+            a.left = left_metadata
+            if left_data == left_metadata.get('Position '):
+                (left_metadata['Position_single'], left_filepos) = left_func.split_manifest(a.left, LD_SEP)
+
+                if left_left_filepos == 'RO':
+                    oconed_right = kwargs['Filename'].split(LD_FILE = ')', 1)[1:]
+
+                self.expected_right

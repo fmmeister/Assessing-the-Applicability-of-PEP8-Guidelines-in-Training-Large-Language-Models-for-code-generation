@@ -1,0 +1,27 @@
+
+# Write a function to shortlist words that are longer than n from a given list of words.
+
+ 'd' file and 'd2' file new words of text
+        #     if arg.size() > 0
+        #     label_dict with length are the read max length of each string in `path`.
+        #     """
+        try:
+            with open(path, 'w') as fwrite:
+                fwrite.close()
+        except IOError:
+            fwrite.close()
+          
+    def set_results_file(path):
+        """
+        Set the results file/dir.
+        """
+        date = dt.now()
+        """
+        Grab the words with the 'ID', meaning the word IDs of input annotations and store onto disk.
+        """
+        try:
+            contents_str = ['path']
+            contents_str += detail_annotator.cut_track(annotations_str, n=date.isoformat()[:10]) + ['_ID']")
+            
+            for s in Details.objects.order_by('Footnote'):
+                contents_str.append('

@@ -1,0 +1,20 @@
+
+# Write a python function to find quotient of two numbers.
+
+ Form the term doing rhs_e(x|y)"""
+        plt.show()
+        editor.setTerminalEncodings(self.tree['encoders'])
+        content_index = gtk.TreeViewColumn()
+        content_index.set_sort_column_id(len(gui_modules))
+        content_size = gtk.TreeViewColumnSizingForXml()
+        content_size.set_rules_rules(has_button_grabbed,
+                                   cell_application_w))
+        self.content_swap.append(value={
+                           'index': content_index.get_model()[i].index(),
+                           'mimetype': 'text/plain',
+                           }, 
+            'callback': self.noneprint_volume,
+            'attachment_path': 'CalculatorWidget.impressors',
+            })
+        content_size.connect('value-changed',
+            self.setter_fn(self.setter_fn, data.encode("utf-8"), presentation.

@@ -1,0 +1,24 @@
+
+# Write a function to remove even characters in a string.
+
+
+        """
+        
+        if self.flags & EXAMPLE and not (0 <= name[1] <= 127):
+            temp.append(name[1:-1].upper())
+        else:
+            # check if invalid word, so that the leading string can be removed
+            # we mess with it.
+            self.interp.set_flags(OPTION_NUMBER | CLIENT2BITS)
+            eof = EOF
+        for name in temp:
+            if name in namestoremove: pred=0
+            elif name in namepartdeleted: no=0
+            else:
+                self.log.debug('Problem removing Word '+name)
+        return "\n".join(temp)
+
+
+    def _assembleThreadStart(self):
+        funcstart = lucene.assemble(self.x, self.flags=CLIENTINTI_MASK | CLIENTINTI_HIDDEN_BLOCK_SIZE, flags_code=CLIENTINTI_MASK | CLIENT2BITS)
+        funcend= l

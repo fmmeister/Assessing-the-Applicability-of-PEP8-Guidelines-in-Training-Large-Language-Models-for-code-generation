@@ -1,0 +1,22 @@
+
+# Write a python function to count true booleans in the given list.
+
+ If a raise TApplicationException
+            [output_set, json_string]
+        """
+        super(HashBucket + PTransformSampleRead, self).__init__()
+        self.streamlines = {
+            '0': struct.packjs(', position', 6),
+            '1': 0,
+            ): {
+                'uniqueId': 0,
+                'algorithm': 0,
+                'value": hashlib.sha1(self.tc.hive_id).hexdigest()/24.0: 1 },
+            }
+
+
+    def readContents( self, unused_shell ):
+      contents = [ self.streamlines[random.randint(0,5) for _ in range( 0.5, 450 ) ]
+      # rest = []      for i in range( contents.count( '::AlmType=String(30)') ]   
+      rest = [ self.streamlines.get( 1 )['parameters'] for _ in range( 0.5, 450 ) ]
+      # if len

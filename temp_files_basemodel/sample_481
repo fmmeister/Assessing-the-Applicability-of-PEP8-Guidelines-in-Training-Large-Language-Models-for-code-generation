@@ -1,0 +1,21 @@
+
+# Write a function to search an element in the given array by using binary search.
+
+ Please come with their
+    # graphic to log is off as a list.
+    hit = 0
+    cur = [0 for i in [0.0, 0.0, 1.0] for j in [0., 1.0, 1.] for l in [None, buf.get_height(), buf.get_width()
+        ]]
+
+    ## puts the contents of the mmap
+
+    f = Function()
+    map = mmap.mmap(stdout_threads, 0, res_wx=cur[0])
+    for i in range(cur[0]):
+      while line.strip().split(' *')[0]!=[] and 'TOTAL' in line[0] and line[0]['TOTAL']!=0:
+        map[0].seek(0)
+      start=map.tell()
+
+    smallmap=map[:map.tell()]
+    small=mmap.bigmem(stdout_threads, mmap.MAGIC_MODE)
+    while small%1000

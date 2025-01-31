@@ -1,0 +1,29 @@
+
+# Write a function to extract all the pairs which are symmetric in the given tuple list.
+
+
+
+    Parameters
+    -----------
+
+    result : tyGPIO <= 3.Return and sequence types in
+        tuple
+       [(OutboundObjects.PAIR_OF_SENSE_DATA, randint(0,1))[0]].disable() returns pairs
+        which are ignored in the pwm (two known way in which phrase we append)
+        pairs.
+
+    TODO
+    ----
+    Uncomment the variable
+    """
+    def write_one_pair(params):
+        for id_ in params:
+            write_pair_dic(id_, clash_num)
+    result[Button.NAME]=write_tuple_and_textvlan_dynamic_sum[Button['response']](result)
+
+
+# Author: Virgdy King
+# Date: Sept 14 {UTTAI_WGL_WEAK} $
+# LICENSE: BSD 3-Clause License
+from bokeh.io import curdoc, output_path
+from interface.component_gen import Scatter, View, Column

@@ -44,8 +44,10 @@ class DiscriminatorDataset(Dataset):
     def __init__(self, data: dict, tokenizer, padding_length):
         self.tokenizer = tokenizer
         self.padding_length = padding_length
-        self.code = torch.Tensor(tokenizer(data['code'], padding='max_length', max_length=padding_length['code'])['input_ids'])
-        self.ground_truth = torch.Tensor(tokenizer(data['ground_truth'], padding='max_length', max_length=padding_length['code'])['input_ids'])
+        self.code = torch.Tensor(tokenizer(data['code'], padding='max_length',
+                                           max_length=padding_length['code'])['input_ids'])
+        self.ground_truth = torch.Tensor(tokenizer(data['ground_truth'], padding='max_length',
+                                                   max_length=padding_length['code'])['input_ids'])
 
     def __len__(self):
         return len(self.code)
@@ -92,9 +94,9 @@ class DiscriminatorDataset(Dataset):
 
 def get_index_length_datasets(train: bool):
     if train:
-        return {'prompts': 49, 'code': 252, 'test_list': 302}
+        return {'prompts': 49, 'code': 252, 'test_list': 302}  # mbpp specific
     else:
-        return None
+        return {'prompts': 51, 'code': 402, 'test_list': 2248}  # mbpp specific
 
 
 def prepare_data(generator: AutoModelForCausalLMWithValueHead,

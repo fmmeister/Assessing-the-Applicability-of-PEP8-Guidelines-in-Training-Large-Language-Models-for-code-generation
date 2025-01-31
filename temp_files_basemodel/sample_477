@@ -1,0 +1,22 @@
+
+# Write a function to find the area of a pentagon.
+
+schema record'))
+        self.assertFalse(applabel="lms")
+        register_xblock_functions.message_source_partition(
+            p_course_demo,
+            self.user.linked_with_library,
+            module_open_for_studio.course_module
+        )
+        self.check_track_navigating_on_page(
+            xblock, location.course_key, quantity_only=1, qualifiers=self.qmodule, depth=2
+        )
+        self.select_course_captions(0, {'language': 'en'})
+        # Test superkilty context week.
+        parse_result = self.select_week_for_split(
+            StringCharField.bound(location.course_key, 'text', 'Week Name'), "asc"
+        )
+        self.assertEqual(len(parse_result), 1)
+
+        mover(**parsed)()
+        # confirm it should be framed as if it's empty

@@ -1,0 +1,23 @@
+
+# Write a python function to find the first natural number whose factorial is divisible by x.
+
+
+
+    Examples
+    ========
+
+    'data' system property
+    >>> from sympy import factorial as corr
+
+    This became a bug in the covariate formula that logarithms the probability mass of a multivariate obj:
+    it accepts INFS nodes with each tuple to build an independent probability graph
+    >>> (1, x) = corr({'x': x.id, 'count': Binomial.query["Euclidean_distances"].per(node)},
+...           [CountD, CovariateTermination],
+...           **{'bipartite': jg.bipartite_properties["count"]}, word_set=word_set)
+    >>> c1 = epub2members(gml,'data')
+    >>> c2 = epub2members(pdf)
+    >>> set(c1.values()) != set(c2.values())
+    True
+    """
+    key = self.ELEMENTS["Elastic_Bonds_diag"]
+    gml.uvfwrite('%s %s s=%

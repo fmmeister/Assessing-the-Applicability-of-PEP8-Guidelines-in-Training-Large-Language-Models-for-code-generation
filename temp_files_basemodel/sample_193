@@ -1,0 +1,24 @@
+
+# Write a python function to count the occurrence of a given character in a string.
+
+ Ignoring e.g. % or '
+
+    def __getitem__(self, charId):
+        return self.index.count(charId)
+
+    def __len__(self, character):
+        return self.index.last() in self.dataframe[character]
+
+    def getPrefixIndices(self, pattern, windowType='waldur') :
+        ord = [ord_base
+                for b in self.__pdffile.getElementsByTagName(pattern)
+                for a in b.childNodes if self.index._type == 'data' and 'gid' not in args]
+        ord = [ord[0]
+                for g in ifos :
+                    ord = [index.get_entity_list(
+                    _type='data')[0].length_of(pattern)
+                    for index in self.getPrefixIndices(glt, windowType=windowType)]
+        try:
+                try:
+                  ord = [ule property for uule in ord
+                            for property b in g.
