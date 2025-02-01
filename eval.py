@@ -52,15 +52,6 @@ def collect_rewards(samples: List[str],
                     avg_rewards_during_batches: List[float],
                     prompts: List[str],
                     discount: float = 1.0) -> tuple[torch.Tensor, List[float]]:
-    """
-    Compute the weighted sum specified metrics for the list of samples.
-
-    :param samples: list of strings of code produced by a generative model
-    :param objectives: list of objective functions return a reward each
-    :param discount: float in (0, 1]; in case the samples represent successive steps, the importance of the later steps can be reduced; 1 for no discount
-    (I use this in the reinforcement learning as implemented in SeqGan)
-    :return: list of rewards for the given samples as float
-    """
     collected = torch.zeros(len(samples))
     reward_list_during_epoch = []
     for k, sample in enumerate(samples):

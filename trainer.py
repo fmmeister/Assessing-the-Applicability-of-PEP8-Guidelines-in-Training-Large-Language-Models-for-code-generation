@@ -35,15 +35,9 @@ class GANTrainer:
         self.tokenizer.pad_token = self.tokenizer.eos_token
         print(" >> init generator")
         if self.cfg.load_generator:
-            if self.cfg.pretrain:
-                self.generator = AutoModelForCausalLM.from_pretrained(self.cfg.gen_dir)
-            else:
-                self.generator = AutoModelForCausalLMWithValueHead.from_pretrained(self.cfg.gen_dir + "generator")
+            self.generator = AutoModelForCausalLMWithValueHead.from_pretrained(self.cfg.gen_dir + "generator")
         else:
-            if self.cfg.pretrain:
-                self.generator = AutoModelForCausalLM.from_pretrained(self.cfg.base_model)
-            else:
-                self.generator = AutoModelForCausalLMWithValueHead.from_pretrained(self.cfg.base_model)
+            self.generator = AutoModelForCausalLMWithValueHead.from_pretrained(self.cfg.base_model)
             self.generator.save_pretrained(self.cfg.gen_dir)
         print(" >> init discriminator")
         self.discriminator = CNNDiscriminator(embed_dim=self.cfg.embed_dim, vocab_size=len(self.tokenizer),
@@ -96,11 +90,11 @@ class GANTrainer:
         self.generator = AutoModelForCausalLMWithValueHead.from_pretrained(self.cfg.gen_dir)
         self.generator = self.generator.to(self.device)
         self.tokenizer.padding_side = "left"
-        # print(" =========== Discriminator Pretraining ===========")
-        # disc_loss = []
-        # disc_acc = []
-        # disc_loss, disc_acc = self._disc_adv_train(-1, disc_loss, disc_acc)
-        # print(" > ", {"loss": disc_loss[0], "acc": disc_acc[0]})
+        print(" =========== Discriminator Pretraining ===========")
+        disc_loss = []
+        disc_acc = []
+        disc_loss, disc_acc = self._disc_adv_train(-1, disc_loss, disc_acc)
+        print(" > ", {"loss": disc_loss[0], "acc": disc_acc[0]})
         print(" >> prepare PPOTrainer")
         self.ppo_trainer = PPOTrainer(config=self.ppo_cfg, model=self.generator, tokenizer=self.tokenizer)
         print(" =========== Start Adversarial Training ===========")
@@ -110,8 +104,8 @@ class GANTrainer:
             avg_rewards = self._gen_adv_train(epoch, avg_rewards)
             print("Average reward: ", avg_rewards[epoch])
             print(f" --- Epoch {epoch}: Discriminator---")
-            # disc_loss, disc_acc = self._disc_adv_train(epoch, disc_acc, disc_loss)
-            # print(" > ", {"loss": disc_loss[epoch + 1], "acc": disc_acc[epoch + 1]})
+            disc_loss, disc_acc = self._disc_adv_train(epoch, disc_acc, disc_loss)
+            print(" > ", {"loss": disc_loss[epoch + 1], "acc": disc_acc[epoch + 1]})
             print(f" -----------------------------------")
         print("Average Rewards for the epochs: ", avg_rewards)
 
@@ -120,8 +114,8 @@ class GANTrainer:
             model_save_now_path = self.cfg.gen_dir + "/" + str(strftime("%Y-%m-%d %H_%M_%S", gmtime()))
             self.generator.save_pretrained(model_save_now_path + "/generator")
             torch.save(self.discriminator.state_dict(), os.path.join(model_save_now_path, "discriminator.pt"))
-            # data = {"disc_loss": disc_loss, "disc_acc": disc_acc, "gen_rewards": avg_rewards}
-            data = {"gen_rewards": avg_rewards}
+            data = {"disc_loss": disc_loss, "disc_acc": disc_acc, "gen_rewards": avg_rewards}
+            # data = {"gen_rewards": avg_rewards}
             with open(model_save_now_path + "output.json", "w") as file:
                 json.dump(data, file, indent=4)
 

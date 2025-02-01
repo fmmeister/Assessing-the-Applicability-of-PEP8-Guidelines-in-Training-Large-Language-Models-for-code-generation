@@ -1,0 +1,27 @@
+# General settings
+gpu: 1
+num_adv_epochs: 1
+batch_size: 32
+data_dir: ""
+save_RL: 0
+delete_temp_files: 1
+eval: 0
+adversarial: 1
+disc_weight: 1
+
+# Generator settings
+gen_dir: "./save/huggan/gen/"
+load_generator: 0
+base_model: "codeparrot/codeparrot-small"
+max_new_tokens: 20
+
+# Discriminator settings
+disc_dir: "./save/huggan/dis"
+load_discriminator: 0
+embed_dim: 64
+filter_sizes: [1,2,3,4,5,6,7,8,9,10,15,20]
+num_filters: [100,200,200,200,200,100,100,100,100,100,160,160]
+dropout: 0.25
+disc_lr: 0.01
+num_samples: 32
+clip_norm: 5.0
