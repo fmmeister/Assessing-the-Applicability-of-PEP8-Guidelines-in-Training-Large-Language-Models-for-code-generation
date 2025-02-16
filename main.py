@@ -30,7 +30,7 @@ if __name__ == "__main__":
         os.makedirs(config.disc_dir, exist_ok=True)
 
     mlflow.set_experiment("RL")
-    with mlflow.start_run(run_name="pretrained_disc"):
+    with mlflow.start_run(run_name="try_new_model"):
         trainer = GANTrainer(config)
 
         if config.adversarial:
@@ -41,4 +41,4 @@ if __name__ == "__main__":
             print(f"Computing time adversarial training: {elapsed_time:.2f} hours")
 
         if config.eval:
-            trainer.eval(9999, [])
+            trainer.eval()

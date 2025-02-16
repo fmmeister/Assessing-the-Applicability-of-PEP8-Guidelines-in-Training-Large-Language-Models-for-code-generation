@@ -12,7 +12,6 @@ from transformers import AutoTokenizer
 from data import DiscriminatorDataset, get_index_length_datasets, sample_from_dataset, load_gen_data, GeneratorDataset
 from discriminator import CNNDiscriminator
 
-
 device = "cuda"
 tokenizer = AutoTokenizer.from_pretrained("codeparrot/codeparrot-small", padding_side="left")
 tokenizer.pad_token = tokenizer.eos_token
@@ -28,7 +27,49 @@ discriminator.to(device)
 adv_loss = torch.nn.CrossEntropyLoss()
 
 dataset_train = load_gen_data(os.path.join("train.json"), tokenizer, train=True)
-dataset_test = load_gen_data(os.path.join("test.json"), tokenizer, train=False)
+
+
+# dataset_test = load_gen_data(os.path.join("test.json"), tokenizer, train=False)
+
+
+def process_tempfiles_to_dataset(directory: str, tokenizer: AutoTokenizer):
+    data_dicts = {"prompts": [],
+                  "code": [],
+                  "test_list": []}
+
+    # Iterate through all files in the directory
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
+
+        # Check if it's a file (not a directory)
+        if os.path.isfile(file_path):
+            # Open and read the file
+            with open(file_path, 'r', encoding='utf-8') as file:
+                content = file.read().strip()
+
+                data_dicts['prompts'].append("")
+                data_dicts['code'].append(content)
+                data_dicts['test_list'].append("")
+
+    def longest_value_token_length(dictionary):
+        lengths = {}
+        for key, values in dictionary.items():
+            if hasattr(values, '__iter__') and not isinstance(values, (str, bytes)):
+                lengths[key] = max(len(tokenizer(value)["input_ids"]) for value in values)
+            elif isinstance(values, str):
+                lengths[key] = len(tokenizer(values)["input_ids"])
+            else:
+                lengths[key] = 0
+        return lengths
+
+    padding_length = longest_value_token_length(data_dicts)
+    print(padding_length)
+    dataset = GeneratorDataset(data_dicts, tokenizer=tokenizer, padding_length=padding_length)
+    return dataset
+
+
+dir = "./finished_models/pretrained_disc_plus_test_list/temp_files"
+dataset_test = process_tempfiles_to_dataset(dir, tokenizer)
 
 
 def sample_from_test_data(dataset: GeneratorDataset, num_samples: int, tokenizer: AutoTokenizer,
@@ -39,7 +80,8 @@ def sample_from_test_data(dataset: GeneratorDataset, num_samples: int, tokenizer
     return samples
 
 
-def prepare_data_test_overfitting(tokenizer: AutoTokenizer, train: bool, num_samples: int = 100) -> DiscriminatorDataset:
+def prepare_data_test_overfitting(tokenizer: AutoTokenizer, train: bool,
+                                  num_samples: int = 100) -> DiscriminatorDataset:
     padding_length = get_index_length_datasets(train)
 
     train_samples = sample_from_dataset(dataset_train, num_samples, tokenizer, padding_length)
@@ -98,13 +140,13 @@ print(f"Total Loss: {total_loss}")
 print(f"Accuracy for Class Test Data: {acc_class_0:.4f}")
 print(f"Accuracy for Class Real Train Data: {acc_class_1:.4f}")
 
-
 # Confusion matrix
 cm = confusion_matrix(all_trues, all_pred)
 
 # Plot
-sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["Test Data", "Real Data"], yticklabels=["Test Data", "Real Data"])
-plt.title("Confusion Matrix")
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["Test Data", "Train Data"],
+            yticklabels=["Test Data", "Train Data"])
+plt.title("Generated Data of Base Model")
 plt.xlabel("Predicted")
 plt.ylabel("True")
 plt.show()
