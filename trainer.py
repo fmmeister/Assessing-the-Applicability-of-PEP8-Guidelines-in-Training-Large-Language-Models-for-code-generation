@@ -1,3 +1,4 @@
+import ast
 import codecs
 import json
 import os.path
@@ -19,7 +20,7 @@ from discriminator import CNNDiscriminator
 from data import prepare_data, load_gen_data, get_index_length_datasets
 from reward_function import get_rewards
 from time import gmtime, strftime
-from evaluation import loading_bar, mbpp_sample_generieren, human_eval_generieren, pass_at_1, eval_pep8
+from evaluation import loading_bar, mbpp_sample_generieren, human_eval_generieren, calculate_pass_at_1_rate, eval_pep8
 
 import warnings
 
@@ -263,7 +264,12 @@ class GANTrainer:
                                    generator=self.ppo_trainer, tokenizer=self.tokenizer,
                                    generation_kwargs=self.generation_kwargs, destination_dir_path="mbpp_samples")
             loading_bar(idx, self.dataset_test.__len__())
-            mbpp_testcases.append(self.dataset_test.__getitem__(idx)['test_list'])
+            mbpp_testcases.append(self.dataset_test.__getitem__(idx)['test_list'].to(torch.int64))
+        print("mbpp_test:", mbpp_testcases)
+        mbpp_testcases = self.tokenizer.batch_decode(mbpp_testcases, skip_special_tokens=True)
+        print("mbpp_test_decoded:", mbpp_testcases)
+        mbpp_testcases = [ast.literal_eval(item) for item in mbpp_testcases]
+        print("mbpp_test_ast:", mbpp_testcases)
         print("\nAll mbpp test sample generated.")
 
         with open('./human_eval.json', 'r') as f:
@@ -274,6 +280,7 @@ class GANTrainer:
             lines = tests.strip().splitlines()
             test_case = [line.strip() for line in lines if line.strip().startswith("assert")]
             human_eval_testcases.append(test_case)
+        print("human_testcase:", human_eval_testcases)
         human_eval_data = torch.Tensor(self.tokenizer(human_eval_data['prompt'], padding='max_length',
                                                       max_length=392)['input_ids'])
         for idx in range(len(human_eval_data)):
@@ -285,10 +292,10 @@ class GANTrainer:
 
         pep8_mbpp = eval_pep8("./mbpp_samples")
         pep8_human_eval = eval_pep8("./human_eval_samples")
-        pass_at_1_mbpp = pass_at_1("./mbpp_samples", mbpp_testcases)
-        pass_at_1_human_eval = pass_at_1("./human_eval_samples", human_eval_testcases)
+        pass_at_1_mbpp = calculate_pass_at_1_rate(mbpp_testcases, "./mbpp_samples", False)
+        pass_at_1_human_eval = calculate_pass_at_1_rate(human_eval_testcases, "./human_eval_samples", False)
         results = {
-            'model': ["mbpp", "human_eval"],
+            'test_dataset': ["mbpp", "human_eval"],
             'pep8': [pep8_mbpp, pep8_human_eval],
             'pass_at_1': [pass_at_1_mbpp, pass_at_1_human_eval]
         }
