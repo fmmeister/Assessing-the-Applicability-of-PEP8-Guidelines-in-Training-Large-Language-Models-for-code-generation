@@ -11,7 +11,8 @@ from transformers import AutoTokenizer
 from pycodestyle import Checker
 
 
-def get_rewards(generation_text: List[str],
+def get_rewards(generation_tensor: List[torch.Tensor],
+                generation_text: List[str],
                 device,
                 discriminator: torch.nn.Module,
                 avg_rewards_during_batches: list,
@@ -38,7 +39,8 @@ def get_rewards(generation_text: List[str],
         rewards = disc_reward_transformation
         avg_rewards = disc_reward_transformation.tolist()
     elif disc_weight == 0:
-        obj_rewards, avg_rewards = collect_rewards(generation_text,
+        obj_rewards, avg_rewards = collect_rewards(generation_tensor,
+                                                   generation_text,
                                                    discount=1,
                                                    avg_rewards_during_batches=avg_rewards_during_batches,
                                                    temp_file_path=temp_file_path,
@@ -46,7 +48,8 @@ def get_rewards(generation_text: List[str],
 
         rewards = obj_rewards.to(disc_reward_transformation.device)
     else:
-        obj_rewards, avg_rewards = collect_rewards(generation_text,
+        obj_rewards, avg_rewards = collect_rewards(generation_tensor,
+                                                   generation_text,
                                                    discount=1,
                                                    avg_rewards_during_batches=avg_rewards_during_batches,
                                                    temp_file_path=temp_file_path,
@@ -59,7 +62,8 @@ def get_rewards(generation_text: List[str],
     return rewards, avg_rewards
 
 
-def collect_rewards(samples: List[str],
+def collect_rewards(generation_tensor: List[torch.Tensor],
+                    generation_text: List[str],
                     avg_rewards_during_batches: List[float],
                     temp_file_path: List[str],
                     test_list: List[str],
@@ -67,18 +71,22 @@ def collect_rewards(samples: List[str],
     """
     Collects rewards of the objective function (pep8 / try_test_list).
     """
-    collected = torch.zeros(len(samples))
+    collected = torch.zeros(len(generation_text))
     reward_list_during_epoch = []
     for k, sample in enumerate(temp_file_path):
 
         try:
             pep08_reward, output = pep08(sample)  # pep8 reward and output
 
-            with open(sample, "a") as temp_file:
+            with open(sample, "a+") as temp_file:
+                code = temp_file.read()
                 temp_file.write("\n\n# Errorcodes: " + str(output) + "\n# pep08_reward: " + str(pep08_reward))
             # test_list_reward = try_test_list(sample, test_list[k])
 
-            reward_list_during_epoch.append(pep08_reward)
+            length_penalty = (generation_tensor[k].shape[0] / 100) - 1
+            # looks up token length of generated code and maps it to [-1, 1] (max_new_token_length = 200)
+
+            reward_list_during_epoch.append(pep08_reward + length_penalty)
             rewards = torch.tensor(pep08_reward)
             collected[k] = torch.sum(torch.tensor(rewards)) * torch.pow(torch.tensor(discount), torch.tensor(k))
         except UnicodeDecodeError:

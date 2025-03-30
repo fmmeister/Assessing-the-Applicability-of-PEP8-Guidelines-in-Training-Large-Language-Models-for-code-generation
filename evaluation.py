@@ -5,6 +5,7 @@ import torch
 from pycodestyle import Checker
 from transformers import AutoTokenizer
 from trl import PPOTrainer
+from collections import Counter
 
 from data import GeneratorDataset
 from reward_function import Capturing
@@ -39,37 +40,24 @@ def mbpp_sample_generieren(idx: int, device: str, dataset_test: GeneratorDataset
     generated_txts = tokenizer.batch_decode(generation_tensor, skip_special_tokens=True)
     if not os.path.exists(destination_dir_path):
         os.makedirs(destination_dir_path)
-    with open(f"{destination_dir_path}/sample_{idx}", "w", encoding='utf-8') as file:
+    with open(f"{destination_dir_path}/sample{idx}.py", "w", encoding='utf-8') as file:
         file.write(generated_txts[0])
 
 
-def human_eval_generieren(idx: int, generator: PPOTrainer, tokenizer: AutoTokenizer,
-                          generation_kwargs: dict, device: str, destination_dir_path: str,
-                          dataset_test: torch.Tensor) -> None:
-    """
-    Generate code files from human_eval dataset.
-    """
-    prompts_tensor = dataset_test[idx].to(torch.int64).to(device)
-    generation_tensor = generator.generate(query_tensor=prompts_tensor, return_prompt=False, **generation_kwargs)
-    generated_txts = tokenizer.batch_decode(generation_tensor, skip_special_tokens=True)
-    if not os.path.exists(destination_dir_path):
-        os.makedirs(destination_dir_path)
-    with open(f"{destination_dir_path}/sample_{idx}", "w", encoding='utf-8') as file:
-        file.write(generated_txts[0])
-
-
-def eval_pep8(directory: str) -> float:
+def eval_pep8(directory: str) -> tuple[float, str, float]:
     """
     Check all files in directory for pep8 errors.
     """
     if not os.path.isdir(directory):
         print(f"Der Pfad {directory} ist kein gültiger Ordner.")
-        return -1.0
+        return -1.0, "", 0.0
 
     files = os.listdir(directory)
 
     count = 0
+    zero_errors = 0
     num_error_list = []
+    error_type_list = []
     for file_name in files:
         file_path = os.path.join(directory, file_name)
         checker = Checker(file_path, show_source=False, show_pep8=True)
@@ -79,9 +67,18 @@ def eval_pep8(directory: str) -> float:
                 num_error_list.append(num_errors)
             except Exception as e:
                 print(f"An error occurred while checking the code: {e}")
+        if num_errors == 0:
+            zero_errors += 1
+        error_type_list.append(output)
         count += 1
-    print("Average pep8 errors found: ", sum(num_error_list) / count)
-    return sum(num_error_list) / count
+    all_errors = [error for file_errors in error_type_list for error in file_errors]
+    error_counts = Counter(all_errors)
+    most_common_error, frequency = error_counts.most_common(1)[0]
+
+    print(f"The most common error is '{most_common_error}' with {frequency} occurrences.")
+    print(f"The compliance rate (0 errors) is {round((zero_errors / count) * 100, 2)}%.")
+    print("Average pep8 errors found: ", round(sum(num_error_list) / count, 2))
+    return round(sum(num_error_list) / count, 2), most_common_error, round((zero_errors / count) * 100, 2)
 
 
 def extract_functions_from_code(code, verbose=False):
@@ -222,7 +219,7 @@ def calculate_pass_at_1_rate(test_list, code_directory, verbose=False):
     total = 0
 
     for idx, test_cases in enumerate(test_list):
-        code_file = os.path.join(code_directory, f"sample_{idx}")
+        code_file = os.path.join(code_directory, f"sample{idx}.py")
         if os.path.exists(code_file):
             total += 1
             if execute_code_and_check_tests(code_file, test_cases, verbose):
@@ -231,6 +228,5 @@ def calculate_pass_at_1_rate(test_list, code_directory, verbose=False):
     if total == 0:
         return 0.0
 
+    print("pass@1 rate: " + str(round((passed / total) * 100, 2)) + "%")
     return (passed / total) * 100
-
-

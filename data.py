@@ -13,12 +13,16 @@ class GeneratorDataset(Dataset):
     Custom Dataset class (inherits from torch.utils.data) for the generator.
     Consists of 'prompts', 'code' and 'test_list' of the mbpp dataset.
     """
+
     def __init__(self, data: dict, tokenizer, padding_length):
         self.tokenizer = tokenizer
         self.padding_length = padding_length
-        self.prompts = torch.Tensor(tokenizer(data['prompts'], padding='max_length', max_length=padding_length['prompts'])['input_ids'])
-        self.code = torch.Tensor(tokenizer(data['code'], padding='max_length', max_length=padding_length['code'])['input_ids'])
-        self.test_list = torch.Tensor(tokenizer(data['test_list'], padding='max_length', max_length=padding_length['test_list'])['input_ids'])
+        self.prompts = torch.Tensor(
+            tokenizer(data['prompts'], padding='max_length', max_length=padding_length['prompts'])['input_ids'])
+        self.code = torch.Tensor(
+            tokenizer(data['code'], padding='max_length', max_length=padding_length['code'])['input_ids'])
+        self.test_list = torch.Tensor(
+            tokenizer(data['test_list'], padding='max_length', max_length=padding_length['test_list'])['input_ids'])
 
     def __len__(self):
         return len(self.prompts)
@@ -49,6 +53,7 @@ class DiscriminatorDataset(Dataset):
     Custom Dataset class (inherits from torch.utils.data) for the discriminator.
     Consists of 'code' and a 'ground_truth' (1 for real data, 0 for generated data).
     """
+
     def __init__(self, data: dict, tokenizer, padding_length):
         self.tokenizer = tokenizer
         self.padding_length = padding_length
@@ -100,20 +105,26 @@ class DiscriminatorDataset(Dataset):
             return Exception
 
 
-def get_index_length_datasets(train: bool, code_parrot: bool) -> dict:
+def get_index_length_datasets(train: bool, code_parrot: bool, mbpp: bool) -> dict:
     """
     Needed for max_lenth parameter for tokenization; specific to mbpp dataset.
     """
-    if code_parrot:
-        if train:
-            return {'prompts': 49, 'code': 252, 'test_list': 302}  # for codeparrot/codeparrot-small tokenizer
+    if mbpp:
+        if code_parrot:
+            if train:
+                return {'prompts': 49, 'code': 252, 'test_list': 302}  # for codeparrot/codeparrot-small tokenizer
+            else:
+                return {'prompts': 51, 'code': 0, 'test_list': 2248}
         else:
-            return {'prompts': 51, 'code': 402, 'test_list': 2248}
+            if train:
+                return {'prompts': 50, 'code': 289, 'test_list': 350}  # for Qwen/Qwen2.5-0.5B tokenizer
+            else:
+                return {'prompts': 47, 'code': 0, 'test_list': 3670}
     else:
-        if train:
-            return {'prompts': 50, 'code': 289, 'test_list': 350}  # for Qwen/Qwen2.5-0.5B tokenizer
-        else:
-            return {'prompts': 47, 'code': 432, 'test_list': 3670}
+        if code_parrot:
+            if not train:
+                return {'prompts': 391, 'code': 0, 'test_list': 235}  # for codeparrot/codeparrot-small tokenizer +
+                # humaneval dataset for evaluation
 
 
 def prepare_data(generator: AutoModelForCausalLMWithValueHead,
@@ -126,19 +137,20 @@ def prepare_data(generator: AutoModelForCausalLMWithValueHead,
     """
     gen_args['num_return_sequences'] = num_samples
 
-    padding_length = get_index_length_datasets(train, code_parrot)
+    padding_length = get_index_length_datasets(train, code_parrot, mbpp=True)
 
     generated_samples = sample_from_generation(generator, gen_args, tokenizer, padding_length)
     ground_truth_samples = sample_from_dataset(ground_dataset, num_samples, tokenizer, padding_length)
-    dataset = DiscriminatorDataset.interleave(generated_samples, ground_truth_samples, num_samples * 2, tokenizer, padding_length)
+    dataset = DiscriminatorDataset.interleave(generated_samples, ground_truth_samples, num_samples * 2, tokenizer,
+                                              padding_length)
     return dataset
 
 
-def sample_from_generation(generator: AutoModelForCausalLMWithValueHead, gen_args: dict, tokenizer: AutoTokenizer, padding_length: dict) -> DiscriminatorDataset:
+def sample_from_generation(generator: AutoModelForCausalLMWithValueHead, gen_args: dict, tokenizer: AutoTokenizer,
+                           padding_length: dict) -> DiscriminatorDataset:
     """
     Generates num_samples * samples (ground_truth = 0) with the current generator, which has been saved in the last epoch.
     """
-    print(gen_args)
     with torch.no_grad():
         samples = generator.generate(**gen_args)
 
@@ -148,7 +160,8 @@ def sample_from_generation(generator: AutoModelForCausalLMWithValueHead, gen_arg
     return DiscriminatorDataset(sample_dicts, tokenizer=tokenizer, padding_length=padding_length)
 
 
-def sample_from_dataset(dataset: GeneratorDataset, num_samples: int, tokenizer: AutoTokenizer, padding_length: dict) -> DiscriminatorDataset:
+def sample_from_dataset(dataset: GeneratorDataset, num_samples: int, tokenizer: AutoTokenizer,
+                        padding_length: dict) -> DiscriminatorDataset:
     """
     Returns num_samples * samples (ground_truth = 1) from the dataset.
     """
@@ -158,26 +171,16 @@ def sample_from_dataset(dataset: GeneratorDataset, num_samples: int, tokenizer: 
     return samples
 
 
-def load_gen_data(file_path: str, tokenizer: AutoTokenizer, train: bool, code_parrot: bool) -> GeneratorDataset:
+def load_gen_data(file_path: str, tokenizer: AutoTokenizer, train: bool, code_parrot: bool,
+                  mbpp: bool) -> GeneratorDataset:
     """
     Process dataset of the following structure to GeneratorDataset.
-
-    Structure of dataset in json file:
-    {"task_id": int, "text": str, "code": str, "test_list": List[str], "test_setup_code": str,
-    "challenge_test_list": List}
-    {"task_id": int, "text": str, "code": str, "test_list": List[str], "test_setup_code": str,
-    "challenge_test_list": List}
-    ...
-
     """
-    with open(file_path, "r") as file:
-        data = [json.loads(line) for line in file]
-
-    data_dicts = {"prompts": [entry["text"] for entry in data],
-                  "code": [entry["code"] for entry in data],
-                  "test_list": [str(entry["test_list"]) for entry in data]}
-
-    padding_length = get_index_length_datasets(train, code_parrot=code_parrot)
+    with open(file_path, "r", encoding="utf-8") as file:
+        data_dicts = json.load(file)
+    data_dicts['code'] = ["" for _ in range(0, len(data_dicts['test_list']))]
+    data_dicts['test_list'] = [str(item) for item in data_dicts['test_list']]
+    padding_length = get_index_length_datasets(train, code_parrot=code_parrot, mbpp=mbpp)
 
     dataset = GeneratorDataset(data_dicts, tokenizer=tokenizer, padding_length=padding_length)
     return dataset

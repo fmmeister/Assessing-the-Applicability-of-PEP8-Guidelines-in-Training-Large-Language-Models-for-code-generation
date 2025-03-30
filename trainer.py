@@ -7,7 +7,6 @@ import gc
 import tempfile
 from statistics import mean
 
-import mlflow
 import pandas as pd
 from torch import Tensor
 from argparse import Namespace
@@ -20,7 +19,7 @@ from discriminator import CNNDiscriminator
 from data import prepare_data, load_gen_data, get_index_length_datasets
 from reward_function import get_rewards
 from time import gmtime, strftime
-from evaluation import loading_bar, mbpp_sample_generieren, human_eval_generieren, calculate_pass_at_1_rate, eval_pep8
+from evaluation import loading_bar, mbpp_sample_generieren, calculate_pass_at_1_rate, eval_pep8
 
 import warnings
 
@@ -73,27 +72,10 @@ class GANTrainer:
         self.adv_loss = torch.nn.CrossEntropyLoss()
         self.optimizer = torch.optim.AdamW(self.discriminator.parameters(), lr=self.cfg.disc_lr)
         print(" >> read data")
-        self.dataset_train = load_gen_data(os.path.join(self.cfg.data_dir, "train.json"), self.tokenizer,
-                                           train=True, code_parrot=self.code_parrot)
-        self.dataset_test = load_gen_data(os.path.join(self.cfg.data_dir, "test.json"), self.tokenizer,
-                                          train=False, code_parrot=self.code_parrot)
-
-        # Logging parameters
-        mlflow.log_param("num_adv_epochs", self.cfg.num_adv_epochs)
-        mlflow.log_param("gen_batch_size", self.cfg.batch_size)
-        mlflow.log_param("disc_weight", self.cfg.disc_weight)
-        mlflow.log_param("gen_max_new_tokens", self.cfg.max_new_tokens)
-        mlflow.log_param("disc_embed_dim", self.cfg.embed_dim)
-        mlflow.log_param("disc_filter_sizes", self.cfg.filter_sizes)
-        mlflow.log_param("disc_num_filters", self.cfg.num_filters)
-        mlflow.log_param("disc_dropout", self.cfg.dropout)
-        mlflow.log_param("disc_lr", self.cfg.disc_lr)
-        mlflow.log_param("disc_num_samples", self.cfg.num_samples)
-        mlflow.log_param("disc_clip_norm", self.cfg.clip_norm)
-        if self.cfg.load_generator:
-            mlflow.log_param("load_generator", True)
-        else:
-            mlflow.log_param("base_model", self.cfg.base_model)
+        self.dataset_train = load_gen_data(os.path.join(self.cfg.data_dir, "mbpp_train.json"), self.tokenizer,
+                                           train=True, code_parrot=self.code_parrot, mbpp=True)
+        self.dataset_test = load_gen_data(os.path.join(self.cfg.data_dir, "mbpp_test.json"), self.tokenizer,
+                                          train=False, code_parrot=self.code_parrot, mbpp=True)
 
     def adversarial_train(self) -> None:
         """
@@ -140,7 +122,7 @@ class GANTrainer:
         Trainings process of the generator.
         """
         data = DataLoader(dataset=self.dataset_train, batch_size=self.cfg.batch_size, shuffle=True, drop_last=True)
-        padding_length = get_index_length_datasets(train=True, code_parrot=self.code_parrot)
+        padding_length = get_index_length_datasets(train=True, code_parrot=self.code_parrot, mbpp=True)
         avg_rewards_during_batches = []
         for batch_number, batch in enumerate(data):
             prompts_tensor = [prompt.to(torch.int64).to(self.device) for prompt in
@@ -167,11 +149,11 @@ class GANTrainer:
                         temp_file.write(header_prompt.encode('utf-8'))
                         temp_file.write(code.encode('utf-8'))
                         temp_file_path.append(temp_file.name)
-                    mlflow.log_artifact(temp_file.name)
                     break
                 except UnicodeError:
                     pass
-            rewards, avg_rewards_during_batches = get_rewards(generation_text=generated_txts,
+            rewards, avg_rewards_during_batches = get_rewards(generation_tensor=generation_tensor,
+                                                              generation_text=generated_txts,
                                                               discriminator=self.discriminator,
                                                               avg_rewards_during_batches=avg_rewards_during_batches,
                                                               tokenizer=self.tokenizer, device=self.device,
@@ -190,7 +172,6 @@ class GANTrainer:
         self.generator.save_pretrained(os.path.join(self.cfg.gen_dir, "generator"))
         avg_rewards_during_epoch = mean(avg_rewards_during_batches)  # mean(avg_reward per batch) = avg_reward(epoch)
         avg_rewards.append(avg_rewards_during_epoch)
-        mlflow.log_metric("gen_rewards", avg_rewards[current_epoch], step=current_epoch)
         return avg_rewards
 
     def _disc_adv_train(self, current_epoch: int, disc_loss_list: list, disc_acc_list: list) -> tuple[list, list]:
@@ -243,8 +224,6 @@ class GANTrainer:
         total_loss /= len(data)
         total_acc /= total_num
         torch.save(self.discriminator.state_dict(), os.path.join(self.cfg.disc_dir, "discriminator.pt"))
-        mlflow.log_metric("disc_loss", total_loss, step=current_epoch)
-        mlflow.log_metric("disc_acc", total_acc, step=current_epoch)
         disc_acc_list.append(total_acc)
         disc_loss_list.append(total_loss)
         return disc_loss_list, disc_acc_list
@@ -257,7 +236,7 @@ class GANTrainer:
 
     def eval(self) -> None:
         print(">> begin evaluation")
-
+        print("> start generating mbpp samples")
         mbpp_testcases = []
         for idx in range(self.dataset_test.__len__()):
             mbpp_sample_generieren(idx=idx, device=self.device, dataset_test=self.dataset_test,
@@ -265,40 +244,34 @@ class GANTrainer:
                                    generation_kwargs=self.generation_kwargs, destination_dir_path="mbpp_samples")
             loading_bar(idx, self.dataset_test.__len__())
             mbpp_testcases.append(self.dataset_test.__getitem__(idx)['test_list'].to(torch.int64))
-        print("mbpp_test:", mbpp_testcases)
         mbpp_testcases = self.tokenizer.batch_decode(mbpp_testcases, skip_special_tokens=True)
-        print("mbpp_test_decoded:", mbpp_testcases)
         mbpp_testcases = [ast.literal_eval(item) for item in mbpp_testcases]
-        print("mbpp_test_ast:", mbpp_testcases)
         print("\nAll mbpp test sample generated.")
 
-        with open('./human_eval.json', 'r') as f:
-            human_eval_data = json.load(f)
-
+        humaneval_data = load_gen_data(os.path.join(self.cfg.data_dir, "humaneval.json"), self.tokenizer, train=False,
+                                       code_parrot=self.code_parrot, mbpp=False)
+        print("> start generating humaneval samples")
         human_eval_testcases = []
-        for tests in human_eval_data['test']:
-            lines = tests.strip().splitlines()
-            test_case = [line.strip() for line in lines if line.strip().startswith("assert")]
-            human_eval_testcases.append(test_case)
-        print("human_testcase:", human_eval_testcases)
-        human_eval_data = torch.Tensor(self.tokenizer(human_eval_data['prompt'], padding='max_length',
-                                                      max_length=392)['input_ids'])
-        for idx in range(len(human_eval_data)):
-            human_eval_generieren(idx=idx, device=self.device, dataset_test=human_eval_data,
-                                  generator=self.ppo_trainer, tokenizer=self.tokenizer,
-                                  generation_kwargs=self.generation_kwargs, destination_dir_path="human_eval_samples")
-            loading_bar(idx, len(human_eval_data))
+        for idx in range(humaneval_data.__len__()):
+            mbpp_sample_generieren(idx=idx, device=self.device, dataset_test=humaneval_data,
+                                   generator=self.ppo_trainer, tokenizer=self.tokenizer,
+                                   generation_kwargs=self.generation_kwargs, destination_dir_path="human_eval_samples")
+            loading_bar(idx, humaneval_data.__len__())
+            human_eval_testcases.append(humaneval_data.__getitem__(idx)['test_list'].to(torch.int64))
+        human_eval_testcases = self.tokenizer.batch_decode(human_eval_testcases, skip_special_tokens=True)
+        human_eval_testcases = [ast.literal_eval(item) for item in human_eval_testcases]
         print("\nAll human_eval test sample generated.")
 
-        pep8_mbpp = eval_pep8("./mbpp_samples")
-        pep8_human_eval = eval_pep8("./human_eval_samples")
+        pep8_mbpp, most_common_error_mbpp, compliance_rate_mbpp = eval_pep8("./mbpp_samples")
+        pep8_human_eval, most_common_error_humaneval, compliance_rate_humaneval = eval_pep8("./human_eval_samples")
         pass_at_1_mbpp = calculate_pass_at_1_rate(mbpp_testcases, "./mbpp_samples", False)
         pass_at_1_human_eval = calculate_pass_at_1_rate(human_eval_testcases, "./human_eval_samples", False)
         results = {
             'test_dataset': ["mbpp", "human_eval"],
-            'pep8': [pep8_mbpp, pep8_human_eval],
+            'pep8_average_error': [pep8_mbpp, pep8_human_eval],
+            'most_common_error': [most_common_error_mbpp, most_common_error_humaneval],
+            'compliance_rate': [compliance_rate_mbpp, compliance_rate_humaneval],
             'pass_at_1': [pass_at_1_mbpp, pass_at_1_human_eval]
         }
         df = pd.DataFrame(results)
         df.to_csv('results.csv', index=False)
-
