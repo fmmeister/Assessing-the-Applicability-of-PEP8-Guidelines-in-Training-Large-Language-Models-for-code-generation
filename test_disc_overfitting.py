@@ -20,13 +20,13 @@ discriminator = CNNDiscriminator(embed_dim=64, vocab_size=len(tokenizer),
                                  num_filters=[100, 200, 200, 200, 200, 100, 100, 100, 100, 100, 160, 160],
                                  padding_idx=tokenizer.pad_token_id, gpu=True,
                                  dropout=0.25)
-file_path = "./finished_models/discriminator.pt"
+file_path = "./codeparrot_results/disc_pep8_0.9/discriminator.pt"
 state_dict = torch.load(file_path, weights_only=True)
 discriminator.load_state_dict(state_dict)
 discriminator.to(device)
 adv_loss = torch.nn.CrossEntropyLoss()
 
-dataset_train = load_gen_data(os.path.join("train.json"), tokenizer, train=True)
+dataset_train = load_gen_data(os.path.join("./data/mbpp_test.json"), tokenizer, train=False, mbpp=True, code_parrot=True)
 
 
 # dataset_test = load_gen_data(os.path.join("test.json"), tokenizer, train=False)
@@ -68,7 +68,7 @@ def process_tempfiles_to_dataset(directory: str, tokenizer: AutoTokenizer):
     return dataset
 
 
-dir = "./finished_models/pretrained_disc_plus_test_list/temp_files"
+dir = "./codeparrot_results/pretrained_disc/mbpp_samples"
 dataset_test = process_tempfiles_to_dataset(dir, tokenizer)
 
 
@@ -80,9 +80,9 @@ def sample_from_test_data(dataset: GeneratorDataset, num_samples: int, tokenizer
     return samples
 
 
-def prepare_data_test_overfitting(tokenizer: AutoTokenizer, train: bool,
+def prepare_data_test_overfitting(tokenizer: AutoTokenizer, train: bool, codeparrot, mbpp,
                                   num_samples: int = 100) -> DiscriminatorDataset:
-    padding_length = get_index_length_datasets(train)
+    padding_length = get_index_length_datasets(train, codeparrot, mbpp)
 
     train_samples = sample_from_dataset(dataset_train, num_samples, tokenizer, padding_length)
     test_samples = sample_from_test_data(dataset_test, num_samples, tokenizer, padding_length)
@@ -90,7 +90,7 @@ def prepare_data_test_overfitting(tokenizer: AutoTokenizer, train: bool,
     return dataset
 
 
-dataset_disc = prepare_data_test_overfitting(tokenizer=tokenizer, train=False)
+dataset_disc = prepare_data_test_overfitting(tokenizer=tokenizer, train=True, codeparrot=True, mbpp=True)
 data = DataLoader(dataset=dataset_disc, batch_size=64, shuffle=True, drop_last=True)
 
 # Initialize variables to track loss and accuracy for both classes
